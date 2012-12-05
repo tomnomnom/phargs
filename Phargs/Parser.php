@@ -7,6 +7,7 @@ class Parser {
   protected $shortFlags = [];
   protected $longFlags = [];
   protected $longValues = [];
+  protected $shortValues = [];
 
   public function __construct(){
   }
@@ -26,6 +27,11 @@ class Parser {
         continue;
       }
 
+      if ($this->isShortValue($arg)){
+        $this->setShortValue($arg);
+        continue;
+      }
+
       if ($this->isShortFlag($arg)) {
         $this->setShortFlag($arg);
         continue;
@@ -42,6 +48,32 @@ class Parser {
       }
 
     }
+  }
+
+  protected function isShortValue($candidate){
+    if (strlen($candidate) != 2) return false;
+    if ($candidate[0] != '-') return false;
+    if ($candidate[1] == '-') return false;
+    if ($this->nextArgIsValue()) return true;
+
+    return false;
+  }
+
+  protected function setShortValue($value){
+    if ($value[0] == '-'){
+      $value = $value[1];
+    }
+    $this->shortValues[$value] = array_shift($this->argv);
+    return true;
+  }
+
+  public function shortValueIsSet($value){
+    return isset($this->shortValues[$value]);
+  }
+
+  public function getShortValue($value){
+    if (!$this->shortValueIsSet($value)) return null;
+    return $this->shortValues[$value];
   }
 
   public function longValueIsSet($value){
@@ -80,11 +112,16 @@ class Parser {
   protected function nextArgIsValue(){
     if (!isset($this->argv[0])) return false;
     if ($this->isFlag($this->argv[0])) return false;
+
+    // Needed for long values that use '='
+    if ($this->isLongValue($this->argv[0])) return false;
     return true;
   }
 
   protected function isFlag($candidate){
-    return ($this->isShortFlag($candidate) || $this->isLongFlag($candidate));
+    return ($this->isShortFlag($candidate) || 
+            $this->isLongFlag($candidate) || 
+            $this->isCompoundShortFlags($candidate));
   }
 
   public function flagIsSet($flag){
