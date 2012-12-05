@@ -6,6 +6,7 @@ class Parser {
   protected $argv = [];
   protected $shortFlags = [];
   protected $longFlags = [];
+  protected $longValues = [];
 
   public function __construct(){
   }
@@ -20,19 +21,70 @@ class Parser {
     
     while ($arg = array_shift($this->argv)){
 
+      if ($this->isLongValue($arg)){
+        $this->setLongValue($arg); 
+        continue;
+      }
+
       if ($this->isShortFlag($arg)) {
         $this->setShortFlag($arg);
+        continue;
       }
 
       if ($this->isCompoundShortFlags($arg)){
         $this->setCompoundShortFlags($arg); 
+        continue;
       }
 
       if ($this->isLongFlag($arg)){
         $this->setLongFlag($arg);
+        continue;
       }
 
     }
+  }
+
+  public function longValueIsSet($value){
+    return isset($this->longValues[$value]); 
+  }
+
+  public function getLongValue($value){
+    if (!$this->longValueIsSet($value)) return null;
+    return $this->longValues[$value];
+  }
+
+  protected function setLongValue($value){
+    if (substr($value, 0, 2) == '--'){
+      $value = substr($value, 2);
+    }
+    if (strpos($value, '=') !== false){
+      list($key, $value) = explode('=', $value, 2);
+      $this->longValues[$key] = $value;
+      return true;
+    }
+    $this->longValues[$value] = array_shift($this->argv);
+    return true;
+  }
+
+  protected function isLongValue($candidate){
+    if (strlen($candidate) < 4) return false;
+    if ($candidate[0] != '-') return false;
+    if ($candidate[1] != '-') return false;
+
+    if (strpos($candidate, '=') !== false) return true;
+    if ($this->nextArgIsValue()) return true;
+
+    return false;
+  }
+
+  protected function nextArgIsValue(){
+    if (!isset($this->argv[0])) return false;
+    if ($this->isFlag($this->argv[0])) return false;
+    return true;
+  }
+
+  protected function isFlag($candidate){
+    return ($this->isShortFlag($candidate) || $this->isLongFlag($candidate));
   }
 
   public function flagIsSet($flag){

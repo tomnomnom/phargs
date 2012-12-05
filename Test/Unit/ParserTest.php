@@ -55,4 +55,26 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue($p->flagIsSet('r'),    "Short flag [r] should be set");
   }
 
+  public function testLongValuesEquals(){
+    $p = $this->newParser();
+    $p->parse('--prefix=/usr/bin --with-mysql=/who/cares');
+
+    $this->assertTrue($p->longValueIsSet('prefix'), "Long value [prefix] should have been set");
+    $this->assertEquals('/usr/bin', $p->getLongValue('prefix'), "Long value [prefix] should have been [/usr/bin]");
+
+    $this->assertTrue($p->longValueIsSet('with-mysql'), "Long value [with-mysql] should have been set");
+    $this->assertEquals('/who/cares', $p->getLongValue('with-mysql'), "Long value [with-mysql] should have been [/who/cares]");
+  }
+
+  public function testLongValuesSpace(){
+    $p = $this->newParser();
+    $p->parse('--prefix /usr/bin --with-mysql /who/cares');
+
+    $this->assertTrue($p->longValueIsSet('prefix'), "Long value [prefix] should have been set");
+    $this->assertEquals('/usr/bin', $p->getLongValue('prefix'), "Long value [prefix] should have been [/usr/bin]");
+
+    $this->assertTrue($p->longValueIsSet('with-mysql'), "Long value [with-mysql] should have been set");
+    $this->assertEquals('/who/cares', $p->getLongValue('with-mysql'), "Long value [with-mysql] should have been [/who/cares]");
+  }
+
 }
