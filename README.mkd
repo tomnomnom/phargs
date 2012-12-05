@@ -1,0 +1,11 @@
+# Phargs
+
+Phargs is a CLI argument processor for PHP CLI scripts.
+
+## Requirements
+    * PHP 5.4 or newer
+
+## Running the tests
+Just run:
+
+    ~# phpunit
