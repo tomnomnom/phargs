@@ -7,13 +7,8 @@ class Parser {
   protected $flags = [];
   protected $params = [];
 
-
-  protected $shortFlags = [];
-  protected $longFlags = [];
-  protected $longValues = [];
-  protected $shortValues = [];
-
   public function __construct(){
+
   }
 
   public function parse($argv){
@@ -26,6 +21,11 @@ class Parser {
     $this->rawArgv = $this->argv;
     
     while ($arg = array_shift($this->argv)){
+      // Don't even bother checking stuff if it doesn't start with a dash
+      if (!$this->startsWithDash($arg)){
+        continue; 
+      }
+
       // Flags in 2 forms:
       //   -h
       //   --help
@@ -34,9 +34,11 @@ class Parser {
         continue;
       }
 
-      // Long params can either be in 2 forms:
-      //   --long-param val
+      // Params can be in 4 forms:
       //   --long-param=val
+      //   --long-param val
+      //   -p val
+      //   -pval (handled later)
       $paramCandidate = explode('=', $arg, 2);
       if (sizeOf($paramCandidate) == 2){
         // It might be an 'equals style' param
@@ -51,7 +53,39 @@ class Parser {
           continue;
         }
       }
+
+      // At this stage it could be compound flags
+      //   e.g. -Hnri
+      // We should only assume this if all chars are valid flags
+      $flagCandidates = str_split(subStr($arg, 1));
+      $potentialCandidates = sizeOf($flagCandidates);
+      $validCandidates = 0;
+      foreach ($flagCandidates as $flagCandidate){
+        if ($this->isFlag("-{$flagCandidate}")){
+          $validCandidates++;
+        }
+      }
+      if ($validCandidates == $potentialCandidates){
+        foreach ($flagCandidates as $flagCandidate){
+          $this->setFlag("-{$flagCandidate}"); 
+        }
+        continue;
+      }
+
+      // If it wasn't compound flags it may be the 
+      // remaining type of param:
+      //   e.g. -pval
+      $paramCandidate = subStr($arg, 0, 2);
+      if ($this->isParam($paramCandidate)){
+        $value = subStr($arg, 2);
+        $this->setParam($paramCandidate, $value);
+        continue;
+      }
     }
+  }
+
+  protected function startsWithDash($candidate){
+    return (subStr($candidate, 0, 1) == '-');
   }
 
   public function addParam($param, $description = '', $required = false){
