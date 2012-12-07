@@ -96,7 +96,6 @@ class Parser {
     $this->params[$param] = (object) [
       'isSet'   => false,
       'value'   => null,
-      'aliases' => []
     ]; 
     return true;
   }
@@ -104,7 +103,6 @@ class Parser {
   public function addParamAlias($param, $alias){
     if (!$this->isParam($param)) return false;
     $this->paramAliases[$alias] = $param;
-    $this->params[$param]->aliases[] = $alias;
     return true;
   }
 
@@ -113,7 +111,7 @@ class Parser {
     return $this->paramAliases[$alias];
   }
 
-  protected function isParam($param){
+  public function isParam($param){
     $param = $this->resolveParamAlias($param);
     return isSet($this->params[$param]);
   }
@@ -138,7 +136,6 @@ class Parser {
   public function addFlag($flag){
     $this->flags[$flag] = (object) [
       'isSet'   => false,
-      'aliases' => []
     ];
     return true;
   }
@@ -146,7 +143,6 @@ class Parser {
   public function addFlagAlias($flag, $alias){
     if (!$this->isFlag($flag)) return false;
     $this->flagAliases[$alias] = $flag; 
-    $this->flags[$flag]->aliases[] = $alias;
     return true;
   }
 
@@ -158,7 +154,7 @@ class Parser {
     return $this->flagAliases[$alias];
   }
 
-  protected function isFlag($flag){
+  public function isFlag($flag){
     $flag = $this->resolveFlagAlias($flag);
     return isSet($this->flags[$flag]);
   }

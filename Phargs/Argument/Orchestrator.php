@@ -6,7 +6,7 @@ class Orchestrator {
   protected $parser;
   protected $argv = [];
   protected $params = [];
-  protected $flags  = [];
+  protected $flags = [];
   
   public function __construct(Parser $parser, Array $argv){
     $this->parser = $parser; 
@@ -30,5 +30,56 @@ class Orchestrator {
   public function getArgCount(){
     $this->ensureParsed();
     return sizeOf($this->argv);
+  }
+
+  public function expectFlag($flag, $description = '', $required = false){
+    $this->flags[$flag] = (object) [
+      'description' => $description,
+      'required'    => (bool) $required,
+      'aliases'     => []
+    ];
+    $this->parser->addFlag($flag);
+    return true;
+  }
+
+  public function addFlagAlias($flag, $alias){
+    if ($this->parser->addFlagAlias($flag, $alias)){
+      $this->flags[$flag]->aliases[] = $alias;
+      return true;
+    }
+    return false;
+  }
+
+  public function flagIsSet($flag){
+    $this->ensureParsed();
+    return $this->parser->flagIsSet($flag);    
+  }
+
+  public function expectParam($param, $description = '', $required = false){
+    $this->params[$param] = (object) [
+      'description' => $description,
+      'required'    => (bool) $required,
+      'aliases'     => []
+    ];
+    $this->parser->addParam($param);
+    return true;
+  }
+
+  public function addParamAlias($param, $alias){
+    if ($this->parser->addParamAlias($param, $alias)){
+      $this->params[$param]->aliases[] = $alias;
+      return true;
+    }
+    return false;
+  }
+
+  public function paramIsSet($param){
+    $this->ensureParsed();
+    return $this->parser->paramIsSet($param);
+  }
+
+  public function getParamValue($param){
+    $this->ensureParsed();
+    return $this->parser->getParamValue($param);
   }
 }
