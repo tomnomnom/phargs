@@ -92,13 +92,11 @@ class Parser {
     return (subStr($candidate, 0, 1) == '-');
   }
 
-  public function addParam($param, $description = '', $required = false){
+  public function addParam($param){
     $this->params[$param] = (object) [
-      'description' => $description,
-      'required'    => (bool) $required,
-      'isSet'       => false,
-      'value'       => null,
-      'aliases'     => []
+      'isSet'   => false,
+      'value'   => null,
+      'aliases' => []
     ]; 
     return true;
   }
@@ -137,12 +135,10 @@ class Parser {
     return $this->params[$param]->value;
   }
 
-  public function addFlag($flag, $description = '', $required = false){
+  public function addFlag($flag){
     $this->flags[$flag] = (object) [
-      'description' => $description,
-      'required'    => (bool) $required,
-      'isSet'       => false,
-      'aliases'     => []
+      'isSet'   => false,
+      'aliases' => []
     ];
     return true;
   }

@@ -3,5 +3,8 @@
     <testsuite name="Unit">
       <directory>Test/Unit</directory>
     </testsuite>
+    <testsuite name="Integration">
+      <directory>Test/Integration</directory>
+    </testsuite>
   </testsuites>
 </phpunit>
