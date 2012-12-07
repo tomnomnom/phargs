@@ -4,6 +4,10 @@ namespace Phargs;
 class Parser {
   protected $rawArgv = [];
   protected $argv = [];
+  protected $flags = [];
+  protected $params = [];
+
+
   protected $shortFlags = [];
   protected $longFlags = [];
   protected $longValues = [];
@@ -16,171 +20,91 @@ class Parser {
     if (is_array($argv)){
       $this->argv = $argv;
     } else {
+      // Doesn't support quoted strings etc, but is mainly for testing
       $this->argv = explode(' ', $argv);
     }
     $this->rawArgv = $this->argv;
     
     while ($arg = array_shift($this->argv)){
-
-      if ($this->isLongValue($arg)){
-        $this->setLongValue($arg); 
+      // Flags in 2 forms:
+      //   -h
+      //   --help
+      if ($this->isFlag($arg)){
+        $this->setFlag($arg);
         continue;
       }
 
-      if ($this->isShortValue($arg)){
-        $this->setShortValue($arg);
-        continue;
+      // Long params can either be in 2 forms:
+      //   --long-param val
+      //   --long-param=val
+      $paramCandidate = explode('=', $arg, 2);
+      if (sizeOf($paramCandidate) == 2){
+        // It might be an 'equals style' param
+        if ($this->isParam($paramCandidate[0])){
+          $this->setParam($paramCandidate[0], $paramCandidate[1]);
+          continue;
+        }
+      } else {
+        // It might be a 'space style' param
+        if ($this->isParam($arg)){
+          $this->setParam($arg, array_shift($this->argv));
+          continue;
+        }
       }
-
-      if ($this->isShortFlag($arg)) {
-        $this->setShortFlag($arg);
-        continue;
-      }
-
-      if ($this->isCompoundShortFlags($arg)){
-        $this->setCompoundShortFlags($arg); 
-        continue;
-      }
-
-      if ($this->isLongFlag($arg)){
-        $this->setLongFlag($arg);
-        continue;
-      }
-
     }
   }
 
-  protected function isShortValue($candidate){
-    if (strlen($candidate) != 2) return false;
-    if ($candidate[0] != '-') return false;
-    if ($candidate[1] == '-') return false;
-    if ($this->nextArgIsValue()) return true;
-
-    return false;
-  }
-
-  protected function setShortValue($value){
-    if ($value[0] == '-'){
-      $value = $value[1];
-    }
-    $this->shortValues[$value] = array_shift($this->argv);
+  public function addParam($param, $description = '', $required = false){
+    $this->params[$param] = (object) [
+      'description' => $description,
+      'required'    => (bool) $required,
+      'isSet'       => false,
+      'value'       => null
+    ]; 
     return true;
   }
 
-  public function shortValueIsSet($value){
-    return isset($this->shortValues[$value]);
+  protected function isParam($param){
+    return isSet($this->params[$param]);
   }
 
-  public function getShortValue($value){
-    if (!$this->shortValueIsSet($value)) return null;
-    return $this->shortValues[$value];
-  }
-
-  public function longValueIsSet($value){
-    return isset($this->longValues[$value]); 
-  }
-
-  public function getLongValue($value){
-    if (!$this->longValueIsSet($value)) return null;
-    return $this->longValues[$value];
-  }
-
-  protected function setLongValue($value){
-    if (substr($value, 0, 2) == '--'){
-      $value = substr($value, 2);
-    }
-    if (strpos($value, '=') !== false){
-      list($key, $value) = explode('=', $value, 2);
-      $this->longValues[$key] = $value;
-      return true;
-    }
-    $this->longValues[$value] = array_shift($this->argv);
+  protected function setParam($param, $value){
+    $this->params[$param]->isSet = true;
+    $this->params[$param]->value = $value;
     return true;
   }
 
-  protected function isLongValue($candidate){
-    if (strlen($candidate) < 4) return false;
-    if ($candidate[0] != '-') return false;
-    if ($candidate[1] != '-') return false;
-
-    if (strpos($candidate, '=') !== false) return true;
-    if ($this->nextArgIsValue()) return true;
-
-    return false;
+  public function paramIsSet($param){
+    return (bool) $this->params[$param]->isSet;
   }
 
-  protected function nextArgIsValue(){
-    if (!isset($this->argv[0])) return false;
-    if ($this->isFlag($this->argv[0])) return false;
+  public function getParamValue($param){
+    return $this->params[$param]->value;
+  }
 
-    // Needed for long values that use '='
-    if ($this->isLongValue($this->argv[0])) return false;
+  public function addFlag($flag, $description = '', $required = false){
+    $this->flags[$flag] = (object) [
+      'description' => $description,
+      'required'    => (bool) $required,
+      'isSet'       => false
+    ];
     return true;
   }
 
-  protected function isFlag($candidate){
-    return ($this->isShortFlag($candidate) || 
-            $this->isLongFlag($candidate) || 
-            $this->isCompoundShortFlags($candidate));
+  protected function isFlag($flag){
+    return isSet($this->flags[$flag]);
+  }
+
+  protected function setFlag($flag){
+    $this->flags[$flag]->isSet = true; 
+    return true;
   }
 
   public function flagIsSet($flag){
-    return ($this->shortFlagIsSet($flag) || $this->longFlagIsSet($flag));
-  }
-  protected function setLongFlag($flag){
-    if (substr($flag, 0, 2) == '--'){
-      $flag = substr($flag, 2);
-    }
-    $this->longFlags[$flag] = true;
-  }
-
-  protected function isLongFlag($candidate){
-    if (strlen($candidate) < 4) return false;
-    if ($candidate[0] != '-') return false;
-    if ($candidate[1] != '-') return false;
-    if (strpos($candidate, '=') !== false) return false;
-    return true;
-  }
-
-  public function longFlagIsSet($flag){
-    return isset($this->longFlags[$flag]); 
-  }
-
-  protected function setCompoundShortFlags($flags){
-    $flags = str_split($flags); 
-    if ($flags[0] == '-') array_shift($flags);
-    foreach ($flags as $flag){
-      $this->setShortFlag($flag);
-    }
-  }
-
-  protected function isCompoundShortFlags($candidate){
-    if (strlen($candidate) <= 2) return false;
-    if ($candidate[0] != '-') return false;
-    if ($candidate[1] == '-') return false;
-    return true;
-  }
-
-  protected function setShortFlag($flag){
-    if (strlen($flag) == 2){
-      $flag = $flag[1];
-    }
-    $this->shortFlags[$flag] = true;
-    return true;
-  }
-
-  protected function isShortFlag($candidate){
-    if (strlen($candidate) != 2) return false;
-    if ($candidate[0] != '-') return false;
-    if ($candidate[1] == '-') return false;
-    return true;
+    return (bool) $this->flags[$flag]->isSet; 
   }
 
   public function getRawArgv(){
     return $this->rawArgv;
-  }
-
-  public function shortFlagIsSet($flag){
-    return isset($this->shortFlags[$flag]);
   }
 }
