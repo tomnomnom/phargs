@@ -11,6 +11,8 @@ class Parser {
   protected $params = [];
   protected $paramAliases = [];
 
+  protected $args = [];
+
   public function __construct(){
 
   }
@@ -25,11 +27,6 @@ class Parser {
     $this->rawArgv = $this->argv;
     
     while ($arg = array_shift($this->argv)){
-      // Don't even bother checking stuff if it doesn't start with a dash
-      if (!$this->startsWithDash($arg)){
-        continue; 
-      }
-
       // Flags in 2 forms:
       //   -h
       //   --help
@@ -85,6 +82,9 @@ class Parser {
         $this->setParam($paramCandidate, $value);
         continue;
       }
+
+      // Anything still left is just a regular arg
+      $this->args[] = $arg;
     }
   }
 
@@ -154,7 +154,7 @@ class Parser {
     return true;
   }
 
-  public function resolveFlagAlias($alias){
+  protected function resolveFlagAlias($alias){
     if (!isset($this->flagAliases[$alias])){
       // Not an alias; so just return the original flag
       return $alias;
@@ -176,6 +176,15 @@ class Parser {
   public function flagIsSet($flag){
     $flag = $this->resolveFlagAlias($flag);
     return (bool) $this->flags[$flag]->isSet; 
+  }
+
+  public function getArgs(){
+    return $this->args;
+  }
+
+  public function getArg($index){
+    if (!isset($this->args[$index])) return false;
+    return $this->args[$index];
   }
 
   public function getRawArgv(){

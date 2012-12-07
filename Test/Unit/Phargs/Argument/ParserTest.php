@@ -216,4 +216,29 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('1000', $p->getParamValue('-c'), "Param [-c] value should be [1000]");
   }
 
+  public function testArgumentsSimple(){
+    $p = $this->newParser(); 
+    $p->parse('help merge');
+
+    $this->assertEquals(['help', 'merge'], $p->getArgs(), "Args should match original");
+  }
+
+  public function testArgumentsMixed(){
+    $p = $this->newParser(); 
+    $p->addFlag('-p');
+    $p->parse('help -p merge');
+
+    $this->assertEquals(['help', 'merge'], $p->getArgs(), "Args should match original");
+  }
+
+  public function testArgumentsMixedByIndex(){
+    $p = $this->newParser(); 
+    $p->addFlag('-p');
+    $p->addParam('--number');
+    $p->parse('--number=5 help -p merge');
+
+    $this->assertEquals('help', $p->getArg(0), "Arg [0] should match [help]");
+    $this->assertEquals('merge', $p->getArg(1), "Arg [1] should match [merge]");
+  }
+
 }
