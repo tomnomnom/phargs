@@ -105,4 +105,20 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertFalse($o->requirementsAreMet(), "Orchestrator requirements should not be met");
   }
+
+  public function testGetExpectedFlags(){
+    $o = $this->newOrchestrator(); 
+    $o->expectFlag('-h');
+    $o->expectFlag('-p');
+
+    $this->assertEquals(2, sizeOf($o->getExpectedFlags()), "There should be [2] expected flags");
+  }
+
+  public function testGetExpectedParams(){
+    $o = $this->newOrchestrator(); 
+    $o->expectParam('-h');
+    $o->expectParam('-p');
+
+    $this->assertEquals(2, sizeOf($o->getExpectedParams()), "There should be [2] expected params");
+  }
 }

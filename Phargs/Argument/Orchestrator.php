@@ -4,13 +4,15 @@ namespace Phargs\Argument;
 class Orchestrator {
   protected $parsed = false;
   protected $parser;
+  protected $rawArgv = [];
   protected $argv = [];
   protected $params = [];
   protected $flags = [];
   
   public function __construct(Parser $parser, Array $argv){
-    $this->parser = $parser; 
-    $this->argv   = $argv;
+    $this->parser  = $parser; 
+    $this->argv    = $argv;
+    $this->rawArgv = $argv;
   }
 
   protected function ensureParsed(){
@@ -99,4 +101,17 @@ class Orchestrator {
     }
     return true;
   }
+
+  public function getRawArgv(){
+    return $this->rawArgv;
+  }
+
+  public function getExpectedFlags(){
+    return $this->flags;
+  }
+
+  public function getExpectedParams(){
+    return $this->params;
+  }
+
 }

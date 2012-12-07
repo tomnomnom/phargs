@@ -2,7 +2,6 @@
 namespace Phargs\Argument;
 
 class Parser {
-  protected $rawArgv = [];
   protected $argv = [];
 
   protected $flags = [];
@@ -24,7 +23,6 @@ class Parser {
       // Doesn't support quoted strings etc, but is mainly for testing
       $this->argv = explode(' ', $argv);
     }
-    $this->rawArgv = $this->argv;
     
     while ($arg = array_shift($this->argv)){
       // Flags in 2 forms:
@@ -177,9 +175,5 @@ class Parser {
   public function getArg($index){
     if (!isset($this->args[$index])) return false;
     return $this->args[$index];
-  }
-
-  public function getRawArgv(){
-    return $this->rawArgv;
   }
 }

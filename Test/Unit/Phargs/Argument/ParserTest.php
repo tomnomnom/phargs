@@ -6,18 +6,6 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     return new \Phargs\Argument\Parser();
   } 
 
-  public function testConstructArray(){
-    $p = $this->newParser();
-    $p->parse([1,2,3]);
-    $this->assertEquals([1,2,3], $p->getRawArgv(), "Raw argv should match original array");
-  }
-
-  public function testConstructString(){
-    $p = $this->newParser();
-    $p->parse('1 2 3');
-    $this->assertEquals([1,2,3], $p->getRawArgv(), "Raw argv should match original string split on space");
-  }
-
   public function testShortFlagSimple(){
     $p = $this->newParser();
     $p->addFlag('-h');
