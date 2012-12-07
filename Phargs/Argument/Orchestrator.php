@@ -82,4 +82,21 @@ class Orchestrator {
     $this->ensureParsed();
     return $this->parser->getParamValue($param);
   }
+
+  public function requirementsAreMet(){
+    foreach ($this->flags as $flag => $props){
+      if (!$props->required) continue;
+      if (!$this->parser->flagIsSet($flag)){
+        return false;
+      }
+    }
+
+    foreach ($this->params as $param => $props){
+      if (!$props->required) continue;
+      if (!$this->parser->paramIsSet($param)){
+        return false;
+      }
+    }
+    return true;
+  }
 }
