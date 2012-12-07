@@ -4,8 +4,12 @@ namespace Phargs\Argument;
 class Parser {
   protected $rawArgv = [];
   protected $argv = [];
+
   protected $flags = [];
+  protected $flagAliases = [];
+
   protected $params = [];
+  protected $paramAliases = [];
 
   public function __construct(){
 
@@ -93,26 +97,43 @@ class Parser {
       'description' => $description,
       'required'    => (bool) $required,
       'isSet'       => false,
-      'value'       => null
+      'value'       => null,
+      'aliases'     => []
     ]; 
     return true;
   }
 
+  public function addParamAlias($param, $alias){
+    if (!$this->isParam($param)) return false;
+    $this->paramAliases[$alias] = $param;
+    $this->params[$param]->aliases[] = $alias;
+    return true;
+  }
+
+  protected function resolveParamAlias($alias){
+    if (!isset($this->paramAliases[$alias])) return $alias;
+    return $this->paramAliases[$alias];
+  }
+
   protected function isParam($param){
+    $param = $this->resolveParamAlias($param);
     return isSet($this->params[$param]);
   }
 
   protected function setParam($param, $value){
+    $param = $this->resolveParamAlias($param);
     $this->params[$param]->isSet = true;
     $this->params[$param]->value = $value;
     return true;
   }
 
   public function paramIsSet($param){
+    $param = $this->resolveParamAlias($param);
     return (bool) $this->params[$param]->isSet;
   }
 
   public function getParamValue($param){
+    $param = $this->resolveParamAlias($param);
     return $this->params[$param]->value;
   }
 
@@ -120,21 +141,40 @@ class Parser {
     $this->flags[$flag] = (object) [
       'description' => $description,
       'required'    => (bool) $required,
-      'isSet'       => false
+      'isSet'       => false,
+      'aliases'     => []
     ];
     return true;
   }
 
+  public function addFlagAlias($flag, $alias){
+    if (!$this->isFlag($flag)) return false;
+    $this->flagAliases[$alias] = $flag; 
+    $this->flags[$flag]->aliases[] = $alias;
+    return true;
+  }
+
+  public function resolveFlagAlias($alias){
+    if (!isset($this->flagAliases[$alias])){
+      // Not an alias; so just return the original flag
+      return $alias;
+    }
+    return $this->flagAliases[$alias];
+  }
+
   protected function isFlag($flag){
+    $flag = $this->resolveFlagAlias($flag);
     return isSet($this->flags[$flag]);
   }
 
   protected function setFlag($flag){
+    $flag = $this->resolveFlagAlias($flag);
     $this->flags[$flag]->isSet = true; 
     return true;
   }
 
   public function flagIsSet($flag){
+    $flag = $this->resolveFlagAlias($flag);
     return (bool) $this->flags[$flag]->isSet; 
   }
 

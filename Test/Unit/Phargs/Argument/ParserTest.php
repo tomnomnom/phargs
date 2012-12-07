@@ -187,4 +187,33 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue($p->flagIsSet('-v'), "Flag [-v] should be set");
   }
 
+  public function testFlagAlias(){
+    $p = $this->newParser();
+    $p->addFlag('-h');
+    $p->addFlagAlias('-h', '--help');
+    $p->parse('--help');
+
+    $this->assertTrue($p->flagIsSet('--help'), "Flag [--help] should be set");
+    $this->assertTrue($p->flagIsSet('-h'), "Flag [-h] should be set");
+  }
+
+  public function testParamAlias(){
+    $p = $this->newParser(); 
+    $p->addParam('-n');
+    $p->addParamAlias('-n', '--number');
+    $p->addParam('--count');
+    $p->addParamAlias('--count', '-c');
+    $p->parse('-n 5 --count=1000');
+
+    $this->assertTrue($p->paramIsSet('-n'), "Param [-n] should be set");
+    $this->assertEquals('5', $p->getParamValue('-n'), "Param [-n] value should be [5]");
+    $this->assertTrue($p->paramIsSet('--number'), "Param [--number] should be set");
+    $this->assertEquals('5', $p->getParamValue('--number'), "Param [--number] value should be [5]");
+
+    $this->assertTrue($p->paramIsSet('--count'), "Param [--count] should be set");
+    $this->assertEquals('1000', $p->getParamValue('--count'), "Param [--count] value should be [1000]");
+    $this->assertTrue($p->paramIsSet('-c'), "Param [-c] should be set");
+    $this->assertEquals('1000', $p->getParamValue('-c'), "Param [-c] value should be [1000]");
+  }
+
 }
