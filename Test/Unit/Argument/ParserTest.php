@@ -1,9 +1,9 @@
 <?php
-namespace Test\Unit\Phargs;
+namespace Test\Unit\Phargs\Argument;
 
 class ParserTest extends \PHPUnit_Framework_TestCase {
   protected function newParser(){
-    return new \Phargs\Parser();
+    return new \Phargs\Argument\Parser();
   } 
 
   public function testConstructArray(){

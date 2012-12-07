@@ -1,5 +1,5 @@
 <?php
-namespace Phargs;
+namespace Phargs\Argument;
 
 class Parser {
   protected $rawArgv = [];
