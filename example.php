@@ -10,4 +10,6 @@ $o->expectFlag('-h', 'Display help');
 $o->addFlagAlias('-h', '--help');
 $o->expectParam('-f', 'Filename');
 
-var_dump($o->getExpectedFlags());
+$s = new \Phargs\Output\Std();
+$s->log('Doing some stuff');
+$s->log('Doing some more stuff');
