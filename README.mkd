@@ -2,33 +2,115 @@
 
 A toolkit for writing CLI scripts in PHP.
 
-## Terminology
+## Argument processing
+The [getopt](http://php.net/manual/en/function.getopt.php) interface isn't the most friendly thing in the world,
+Phargs tries to make your life a bit easier.
 
-### Flag
-A command line argument that turns behaviour on or off.
+Everything in Phargs is available through `\Phargs\Factory`. 
+The argument processor is available via `\Phargs\Factory::args()`.
 
-Examples:
+### Flags
+A *flag* is an argument that turns functionality on or off. Common examples are `-h` to display 
+a help message or `--verbose` to display more output. 
 
-    ./command -h
-    ./command --help
+#### Basic usage
+Phargs needs to be told to *expect* a flag in order to use it.
 
-### Param
-A command line argument that accepts a value.
+```php
+<?php
+// ./Examples/Flags.php
 
-Examples:
+// Bootstrap Phargs
+include __DIR__.'/../Phargs/Init.php';
 
-    ./command -n 5
-    ./command -n5
-    ./command --number 5
-    ./command --number=5
+// Everything in Phargs is available via the Factory
+$factory = new \Phargs\Factory();
 
-### Residual arg
-Anything that's not an expected flag or param.
+// Get an argument processor
+$args = $factory->args();
 
-Examples:
+// Expect the -h flag to be an argument
+$args->expectFlag('-h');
 
-    ./command filename.txt
-    ./command help
+if ($args->flagIsSet('-h')){
+  echo "Help flag is set\n";
+} else {
+  echo "Help flag is not set";
+}
+```
+    ▶ php ./Examples/Flags.php -h
+    Help flag is set
+    ▶ php ./Examples/Flags.php
+    Help flag is not set
+
+#### Flag aliases
+You can *alias* flags to make your script more user friendly. Phargs supports both 
+long (e.g. `--help`) and short (e.g. `-h`) flags.
+
+```php
+<?php
+// ./Examples/FlagAliases.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+$args = $factory->args();
+
+$args->expectFlag('-h');
+
+// Alias the -h flag to --help so either can be used
+$args->addFlagAlias('-h', '--help');
+
+// You could check for --help instead of -h here and it would still work
+if ($args->flagIsSet('-h')){
+  echo "Help flag is set\n";
+} else {
+  echo "Help flag is not set\n";
+}
+```
+    ▶ php ./Examples/FlagAliases.php -h
+    Help flag is set
+    ▶ php ./Examples/FlagAliases.php --help
+    Help flag is set
+
+#### Compound flags
+Phargs also supports *compound flags*; like how you might run `grep -Hnr $searchString *`. Note that if one of the
+flags in the compound string isn't expected, none of the flags will be set.
+
+```php
+<?php
+// ./Examples/CompoundFlags.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+$args = $factory->args();
+
+$args->expectFlag('-H');
+$args->expectFlag('-n');
+$args->expectFlag('-r');
+
+if ($args->flagIsSet('-H')){
+  echo "-H flag is set\n";
+}
+if ($args->flagIsSet('-n')){
+  echo "-n flag is set\n";
+}
+if ($args->flagIsSet('-r')){
+  echo "-r flag is set\n";
+}
+```
+
+    ▶ php ./Examples/CompoundFlags.php -Hnr
+    -H flag is set
+    -n flag is set
+    -r flag is set
+    ▶ php ./Examples/CompoundFlags.php -H -nr
+    -H flag is set
+    -n flag is set
+    -r flag is set
+    ▶ php ./Examples/CompoundFlags.php -Hnri
+    ▶ php ./Examples/CompoundFlags.php -n -r
+    -n flag is set
+    -r flag is set
 
 ## Requirements
 
