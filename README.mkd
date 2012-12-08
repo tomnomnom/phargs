@@ -8,6 +8,7 @@ Phargs is a CLI toolkit for PHP CLI scripts.
 A command line argument that turns behaviour on or off.
 
 Examples:
+
     ./command -h
     ./command --help
 
@@ -15,6 +16,7 @@ Examples:
 A command line argument that accepts a value.
 
 Examples:
+
     ./command -n 5
     ./command -n5
     ./command --number 5
@@ -24,12 +26,13 @@ Examples:
 Anything that's not a flag or param.
 
 Examples:
+
     ./command filename.txt
     ./command help
 
 ## Requirements
 
-    * PHP 5.4 or newer
+* PHP 5.4 or newer
 
 ## Running the tests
 
