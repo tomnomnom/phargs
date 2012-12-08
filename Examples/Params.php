@@ -16,7 +16,7 @@ $args->expectParam('--count');
 if ($args->paramIsSet('--count')){
   echo "--count param is set\n";
   echo "--count value is: ";
-  echo $args->getParamValue('--count');
+  echo $args->getParamValue('--count').PHP_EOL;
 } else {
   echo "--count param is not set\n";
 }

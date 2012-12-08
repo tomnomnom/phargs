@@ -14,7 +14,7 @@ $args->addParamAlias('--count', '-c');
 if ($args->paramIsSet('--count')){
   echo "--count param is set\n";
   echo "--count value is: ";
-  echo $args->getParamValue('-c');
+  echo $args->getParamValue('-c').PHP_EOL;
 } else {
   echo "--count param is not set\n";
 }
