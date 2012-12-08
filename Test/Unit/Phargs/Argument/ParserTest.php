@@ -204,29 +204,40 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('1000', $p->getParamValue('-c'), "Param [-c] value should be [1000]");
   }
 
-  public function testArgumentsSimple(){
+  public function testResidualArgsSimple(){
     $p = $this->newParser(); 
     $p->parse('help merge');
 
-    $this->assertEquals(['help', 'merge'], $p->getArgs(), "Args should match original");
+    $this->assertEquals(['help', 'merge'], $p->getResidualArgs(), "Residual args should match original");
   }
 
-  public function testArgumentsMixed(){
+  public function testResidualArgsMixed(){
     $p = $this->newParser(); 
     $p->addFlag('-p');
     $p->parse('help -p merge');
 
-    $this->assertEquals(['help', 'merge'], $p->getArgs(), "Args should match original");
+    $this->assertEquals(['help', 'merge'], $p->getResidualArgs(), "Residual args should match original");
   }
 
-  public function testArgumentsMixedByIndex(){
+  public function testResidualArgsMixedByIndex(){
     $p = $this->newParser(); 
     $p->addFlag('-p');
     $p->addParam('--number');
     $p->parse('--number=5 help -p merge');
 
-    $this->assertEquals('help', $p->getArg(0), "Arg [0] should match [help]");
-    $this->assertEquals('merge', $p->getArg(1), "Arg [1] should match [merge]");
+    $this->assertEquals('help', $p->getResidualArg(0), "Residual arg [0] should match [help]");
+    $this->assertEquals('merge', $p->getResidualArg(1), "Residual arg [1] should match [merge]");
+  }
+
+  public function testResidualArgsRange(){
+    $p = $this->newParser(); 
+    $p->addFlag('-h');
+    $p->parse('-h zero one two three four five six');
+
+    $this->assertEquals('zero', $p->getResidualArg(0), "Residual arg [0] should match [zero]");
+    $this->assertEquals(['zero', 'one', 'two'], $p->getResidualArgs(0, 3), "Residual args [0,3] should match [zero, one, two]");
+    $this->assertEquals(['four', 'five', 'six'], $p->getResidualArgs(4), "Residual args [4,null] should match [four, five, six]");
+    $this->assertEquals(['two', 'three', 'four'], $p->getResidualArgs(2, 3), "Residual args [2,3] should match [two, three, four]");
   }
 
 }

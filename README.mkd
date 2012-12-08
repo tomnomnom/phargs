@@ -4,7 +4,7 @@ A toolkit for writing CLI scripts in PHP.
 
 ## Terminology
 
-### flag
+### Flag
 A command line argument that turns behaviour on or off.
 
 Examples:
@@ -12,7 +12,7 @@ Examples:
     ./command -h
     ./command --help
 
-### param
+### Param
 A command line argument that accepts a value.
 
 Examples:
@@ -22,8 +22,8 @@ Examples:
     ./command --number 5
     ./command --number=5
 
-### arg
-Anything that's not a flag or param.
+### Residual arg
+Anything that's not an expected flag or param.
 
 Examples:
 

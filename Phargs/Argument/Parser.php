@@ -10,7 +10,7 @@ class Parser {
   protected $params = [];
   protected $paramAliases = [];
 
-  protected $args = [];
+  protected $residualArgs = [];
 
   public function __construct(){
 
@@ -82,7 +82,7 @@ class Parser {
       }
 
       // Anything still left is just a regular arg
-      $this->args[] = $arg;
+      $this->residualArgs[] = $arg;
     }
   }
 
@@ -168,12 +168,16 @@ class Parser {
     return (bool) $this->flags[$flag]->isSet; 
   }
 
-  public function getArgs(){
-    return $this->args;
+  public function getResidualArgs($offset = 0, $count = null){
+    if ($offset == 0 && $count == null){
+      // Shortcut to avoid slicing
+      return $this->residualArgs;
+    }
+    return array_slice($this->residualArgs, $offset, $count);
   }
 
-  public function getArg($index){
-    if (!isset($this->args[$index])) return false;
-    return $this->args[$index];
+  public function getResidualArg($index){
+    if (!isset($this->residualArgs[$index])) return false;
+    return $this->residualArgs[$index];
   }
 }
