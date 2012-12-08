@@ -86,6 +86,7 @@ class Orchestrator {
   }
 
   public function requirementsAreMet(){
+    $this->ensureParsed();
     foreach ($this->flags as $flag => $props){
       if (!$props->required) continue;
       if (!$this->parser->flagIsSet($flag)){
@@ -112,6 +113,16 @@ class Orchestrator {
 
   public function getExpectedParams(){
     return $this->params;
+  }
+
+  public function getResidualArgs($offset = 0, $count = null){
+    $this->ensureParsed();
+    return $this->parser->getResidualArgs($offset, $count);
+  }
+
+  public function getResidualArg($index){
+    $this->ensureParsed();
+    return $this->parser->getResidualArg($index);
   }
 
 }

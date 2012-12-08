@@ -116,4 +116,39 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
   }
 
+  public function testResidualArgs(){
+    list($output, $exitCode) = $this->execExample('ResidualArgs', 'help merge');
+    $this->assertEquals(
+      array(
+        'Residual arg #0: help',
+        'All residual args: help, merge',
+        'First two residual args: help, merge'
+      ),
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('ResidualArgs', '-h help --count=5 merge');
+    $this->assertEquals(
+      array(
+        'Residual arg #0: help',
+        'All residual args: help, merge',
+        'First two residual args: help, merge'
+      ),
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('ResidualArgs', 'help merge this thing');
+    $this->assertEquals(
+      array(
+        'Residual arg #0: help',
+        'All residual args: help, merge, this, thing',
+        'First two residual args: help, merge'
+      ),
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+  }
+
 }
