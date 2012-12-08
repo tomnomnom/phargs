@@ -1,6 +1,6 @@
 # Phargs
 
-Phargs is a CLI argument processor for PHP CLI scripts.
+Phargs is a CLI toolkit for PHP CLI scripts.
 
 ## Terminology
 
