@@ -6,5 +6,8 @@
     <testsuite name="Integration">
       <directory>Test/Integration</directory>
     </testsuite>
+    <testsuite name="FullStack">
+      <directory>Test/FullStack</directory>
+    </testsuite>
   </testsuites>
 </phpunit>
