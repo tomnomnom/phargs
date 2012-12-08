@@ -4,10 +4,10 @@ namespace Phargs\Argument;
 class Orchestrator {
   protected $parsed = false;
   protected $parser;
-  protected $rawArgv = [];
-  protected $argv = [];
-  protected $params = [];
-  protected $flags = [];
+  protected $rawArgv = array();
+  protected $argv = array();
+  protected $params = array();
+  protected $flags = array();
   
   public function __construct(Parser $parser, Array $argv){
     $this->parser  = $parser; 
@@ -35,11 +35,11 @@ class Orchestrator {
   }
 
   public function expectFlag($flag, $description = '', $required = false){
-    $this->flags[$flag] = (object) [
+    $this->flags[$flag] = (object) array(
       'description' => $description,
       'required'    => (bool) $required,
-      'aliases'     => []
-    ];
+      'aliases'     => array()
+    );
     $this->parser->addFlag($flag);
     return true;
   }
@@ -58,11 +58,11 @@ class Orchestrator {
   }
 
   public function expectParam($param, $description = '', $required = false){
-    $this->params[$param] = (object) [
+    $this->params[$param] = (object) array(
       'description' => $description,
       'required'    => (bool) $required,
-      'aliases'     => []
-    ];
+      'aliases'     => array()
+    );
     $this->parser->addParam($param);
     return true;
   }

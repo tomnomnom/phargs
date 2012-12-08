@@ -2,28 +2,28 @@
 namespace Test\Integration\Phargs\Argument;
 
 class OrchestratorTest extends \PHPUnit_Framework_TestCase {
-  protected function newOrchestrator(Array $argv = []){
+  protected function newOrchestrator(Array $argv = array()){
     return new \Phargs\Argument\Orchestrator(
       new \Phargs\Argument\Parser(), $argv
     );
   }
 
   public function testStripCommand(){
-    $o = $this->newOrchestrator(['./command', 'help', 'merge']);  
+    $o = $this->newOrchestrator(array('./command', 'help', 'merge'));  
 
     $this->assertEquals('./command', $o->getCommandName(), "Command name should be [./command]");
     $this->assertEquals(2, $o->getArgCount(), "Arg count should be [2]");
   }
 
   public function testFlag(){
-    $o = $this->newOrchestrator(['./command', '-h']);
+    $o = $this->newOrchestrator(array('./command', '-h'));
     $o->expectFlag('-h');
 
     $this->assertTrue($o->flagIsSet('-h'), "Flag [-h] should be set");
   }
 
   public function testFlagAlias(){
-    $o = $this->newOrchestrator(['./command', '--help']);
+    $o = $this->newOrchestrator(array('./command', '--help'));
     $o->expectFlag('-h');
     $o->addFlagAlias('-h', '--help');
 
@@ -32,7 +32,7 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testParam(){
-    $o = $this->newOrchestrator(['./command', '--number=5']);
+    $o = $this->newOrchestrator(array('./command', '--number=5'));
     $o->expectParam('--number');
 
     $this->assertTrue($o->paramIsSet('--number'), "Param [--number] should be set");
@@ -40,7 +40,7 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testParamAlias(){
-    $o = $this->newOrchestrator(['./command', '--number=5']);
+    $o = $this->newOrchestrator(array('./command', '--number=5'));
     $o->expectParam('-n');
     $o->addParamAlias('-n', '--number');
 
@@ -52,7 +52,7 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testRequiredFlagsHappy(){
-    $o = $this->newOrchestrator(['./command', '-h', '-p']);
+    $o = $this->newOrchestrator(array('./command', '-h', '-p'));
     $o->expectFlag('-h', 'Test flag', true);
     $o->expectFlag('-p', 'Test flag', true);
 
@@ -63,7 +63,7 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testRequiredFlagsSad(){
-    $o = $this->newOrchestrator(['./command', '-r', '-p']);
+    $o = $this->newOrchestrator(array('./command', '-r', '-p'));
     $o->expectFlag('-r', 'Test flag', false);
     $o->expectFlag('-h', 'Test flag', true);
     $o->expectFlag('-p', 'Test flag', true);
@@ -76,7 +76,7 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testRequiredParamsHappy(){
-    $o = $this->newOrchestrator(['./command', '--number=5', '--count=1000']);
+    $o = $this->newOrchestrator(array('./command', '--number=5', '--count=1000'));
     $o->expectParam('--number', 'Test param', true);
     $o->expectParam('--count', 'Test param', true);
 
@@ -90,7 +90,7 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testRequiredParamsSad(){
-    $o = $this->newOrchestrator(['./command', '--number=5', '--cheese=chedder']);
+    $o = $this->newOrchestrator(array('./command', '--number=5', '--cheese=chedder'));
     $o->expectParam('--cheese', 'Test param', false);
     $o->expectParam('--number', 'Test param', true);
     $o->expectParam('--count', 'Test param', true);

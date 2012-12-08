@@ -208,7 +208,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     $p = $this->newParser(); 
     $p->parse('help merge');
 
-    $this->assertEquals(['help', 'merge'], $p->getResidualArgs(), "Residual args should match original");
+    $this->assertEquals(array('help', 'merge'), $p->getResidualArgs(), "Residual args should match original");
   }
 
   public function testResidualArgsMixed(){
@@ -216,7 +216,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     $p->addFlag('-p');
     $p->parse('help -p merge');
 
-    $this->assertEquals(['help', 'merge'], $p->getResidualArgs(), "Residual args should match original");
+    $this->assertEquals(array('help', 'merge'), $p->getResidualArgs(), "Residual args should match original");
   }
 
   public function testResidualArgsMixedByIndex(){
@@ -235,9 +235,9 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     $p->parse('-h zero one two three four five six');
 
     $this->assertEquals('zero', $p->getResidualArg(0), "Residual arg [0] should match [zero]");
-    $this->assertEquals(['zero', 'one', 'two'], $p->getResidualArgs(0, 3), "Residual args [0,3] should match [zero, one, two]");
-    $this->assertEquals(['four', 'five', 'six'], $p->getResidualArgs(4), "Residual args [4,null] should match [four, five, six]");
-    $this->assertEquals(['two', 'three', 'four'], $p->getResidualArgs(2, 3), "Residual args [2,3] should match [two, three, four]");
+    $this->assertEquals(array('zero', 'one', 'two'), $p->getResidualArgs(0, 3), "Residual args [0,3] should match [zero, one, two]");
+    $this->assertEquals(array('four', 'five', 'six'), $p->getResidualArgs(4), "Residual args [4,null] should match [four, five, six]");
+    $this->assertEquals(array('two', 'three', 'four'), $p->getResidualArgs(2, 3), "Residual args [2,3] should match [two, three, four]");
   }
 
 }

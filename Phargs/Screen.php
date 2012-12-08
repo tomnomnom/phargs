@@ -2,7 +2,7 @@
 namespace Phargs;
 
 class Screen {
-  protected $colors = [
+  protected $colors = array(
     'black'  => 0,
     'red'    => 1,
     'green'  => 2,
@@ -11,12 +11,12 @@ class Screen {
     'purple' => 5,
     'cyan'   => 6,
     'white'  => 7,
-  ];
-  protected $styles = [
+  );
+  protected $styles = array(
     'regular'   => 0,
     'bold'      => 1,
     'underline' => 4
-  ];
+  );
 
   public function __construct(){
     

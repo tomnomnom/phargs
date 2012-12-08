@@ -2,15 +2,15 @@
 namespace Phargs\Argument;
 
 class Parser {
-  protected $argv = [];
+  protected $argv = array();
 
-  protected $flags = [];
-  protected $flagAliases = [];
+  protected $flags = array();
+  protected $flagAliases = array();
 
-  protected $params = [];
-  protected $paramAliases = [];
+  protected $params = array();
+  protected $paramAliases = array();
 
-  protected $residualArgs = [];
+  protected $residualArgs = array();
 
   public function __construct(){
 
@@ -91,10 +91,10 @@ class Parser {
   }
 
   public function addParam($param){
-    $this->params[$param] = (object) [
+    $this->params[$param] = (object) array(
       'isSet'   => false,
       'value'   => null,
-    ]; 
+    ); 
     return true;
   }
 
@@ -132,9 +132,9 @@ class Parser {
   }
 
   public function addFlag($flag){
-    $this->flags[$flag] = (object) [
+    $this->flags[$flag] = (object) array(
       'isSet'   => false,
-    ];
+    );
     return true;
   }
 
