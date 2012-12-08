@@ -22,11 +22,18 @@ class Screen {
     
   }
 
-  public function out($msg){
+  public function out($msg, $fg = null, $bg = null, $style = null){
+    if ($fg || $bg){
+      $msg = $this->colorize($msg, $fg, $bg, $style);
+    }
     return fputs(STDOUT, $msg);
   }
 
-  public function colorize($string, $fg = null, $bg = null, $style = 'regular'){
+  public function outln($msg, $fg = null, $bg = null, $style = null){
+    return $this->out($msg.PHP_EOL, $fg, $bg, $style);
+  }
+
+  public function colorize($string, $fg = null, $bg = null, $style = null){
     if (!isset($this->colors[$fg])){
       $fg = null;
     }
@@ -58,12 +65,6 @@ class Screen {
     return $fgEscape.$bgEscape.$string.$resetEscape;
   }
 
-  protected function getColorEscape($color){
-    if (!isset($this->colors[$color])) return false;
-    $color = $this->colors[$color];
-    return "\033[0;3{$color}m";
-  }
-
   public function err($msg){
     return fputs(STDERR, $msg);
   }
@@ -72,20 +73,14 @@ class Screen {
     return $this->err($msg.PHP_EOL);
   }
 
-  public function outln($msg){
-    return $this->out($msg.PHP_EOL);
-  }
-  
   public function printf(){
     return $this->out(
       call_user_func_array('sprintf', func_get_args)
     );
   }
 
-  public function varExport(){
-    foreach (func_get_args() as $arg){
-      $this->outln(var_export($arg, true));
-    }
+  public function varExport($var){
+    return $this->outln(var_export($var, true));
   }
 
   public function log($msg){
