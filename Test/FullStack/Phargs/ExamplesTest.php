@@ -63,4 +63,57 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
   }
 
+  public function testParams(){
+    list($output, $exitCode) = $this->execExample('Params', '--count 5');
+    $this->assertEquals(
+      array('--count param is set', '--count value is: 5'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('Params', '--count=6');
+    $this->assertEquals(
+      array('--count param is set', '--count value is: 6'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('Params', '--help');
+    $this->assertEquals(
+      array('--count param is not set'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+  }
+
+  public function testParamAliases(){
+    list($output, $exitCode) = $this->execExample('ParamAliases', '--count 5');
+    $this->assertEquals(
+      array('--count param is set', '--count value is: 5'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('ParamAliases', '-c 6');
+    $this->assertEquals(
+      array('--count param is set', '--count value is: 6'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('ParamAliases', '-c7');
+    $this->assertEquals(
+      array('--count param is set', '--count value is: 7'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('ParamAliases', '--help');
+    $this->assertEquals(
+      array('--count param is not set'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+  }
+
 }
