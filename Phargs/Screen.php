@@ -1,15 +1,17 @@
 <?php
 namespace Phargs;
 
-abstract class Output {
+class Screen {
   public function __construct(){
     
   }
 
-  abstract public function out($msg);
+  public function out($msg){
+    return fputs(STDOUT, $msg);
+  }
 
   public function err($msg){
-    return $this->out($msg); 
+    return fputs(STDERR, $msg);
   }
 
   public function errln($msg){
