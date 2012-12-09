@@ -1,6 +1,12 @@
 # Phargs
 
-A toolkit for writing CLI scripts in PHP.
+Phargs is a toolkit for writing CLI scripts in PHP; it was born out of frustration, anger, and 
+boilerplate déjà vu. It is still very much a work in progress. Pull requests, issues, and 
+suggestions are always welcome.
+
+Phargs' main asset so far is its argument processor, although I am working on tools to make other 
+things easier too.
+
 
 ## Argument processing
 The [getopt](http://php.net/manual/en/function.getopt.php) interface isn't the most friendly thing in the world,
@@ -267,10 +273,21 @@ echo "First two residual args: ".implode(', ', $args->getResidualArgs(0, 2)).PHP
 
 ## Requirements
 
+* Linux of some description
 * PHP 5.3 or newer
 
-## Running the tests
+## Testing
 
-Just run:
+You can run the full test suite by running:
 
     ▶ phpunit
+
+The tests are actually split up into 3 suites, which can be run individually:
+
+    ▶ phpunit --filter Unit
+    ▶ phpunit --filter Integration
+    ▶ phpunit --filter FullStack
+
+The repo is hooked up to Travis CI. You can see the state of the master branch and the 
+build history on the [Phargs Travis CI page](https://travis-ci.org/TomNomNom/phargs).
+The full test suite runs under PHP 5.3 and PHP 5.4.
