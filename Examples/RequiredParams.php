@@ -1,5 +1,5 @@
 <?php
-// ./Examples/RequiredArgs.php
+// ./Examples/RequiredParams.php
 
 include __DIR__.'/../Phargs/Init.php';
 $factory = new \Phargs\Factory();
