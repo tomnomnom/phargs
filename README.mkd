@@ -192,6 +192,35 @@ if ($args->paramIsSet('--count')){
     ▶ php ./Examples/ParamAliases.php -c5
     --count param is set
     --count value is: 5
+    
+#### Required params
+In the examples so far Phargs has *expected* to see params, but it doesn't mind if they're not there. 
+If a param is important enough you can *require* that it exists and then check that all requirements are met:
+
+```php
+<?php
+// ./Examples/RequiredParams.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+$args = $factory->args();
+
+// Require some params
+$args->requireParam('--count');
+$args->requireParam('--number');
+
+// Check that all argument requirements are met
+if ($args->requirementsAreMet()){
+  echo "All arg requirements are met\n";
+} else {
+  echo "Not all arg requirements are met\n";
+}
+```
+
+    ▶ php ./Examples/RequiredParams.php --count=4 --number=5
+    All arg requirements are met
+    ▶ php ./Examples/RequiredParams.php --count=4 
+    Not all arg requirements are met
 
 ### Residual args
 *Residual args* are the arguments left over when expected params and flags have been removed. For example:
