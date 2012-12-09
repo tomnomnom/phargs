@@ -1,0 +1,6 @@
+# Argument processor
+
+The argument processor is Phargs' best asset. It's made up of a Parser
+(which does the actual pulling apart of the arguments) and the 
+Orchestrator (which does things like enforce required arguments).
+

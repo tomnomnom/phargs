@@ -1,0 +1,5 @@
+# Where the magic happens
+
+All of what makes Phargs do the things it does is in here.
+
+The directory structure matches the namespace structure used by the classes.

@@ -1,0 +1,12 @@
+# Test dir
+
+Tests are awesome. I've split my tests up into three suites.
+
+## Unit
+Tests that test exactly one class and no more. 
+
+## Integration
+Tests that test the interaction between one or more classes.
+
+## FullStack
+Tests that actually launch a PHP process that uses Phargs and check the output.

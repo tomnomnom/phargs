@@ -1,0 +1,5 @@
+# Examples
+
+In here are some examples of things Phargs can do.
+
+Each of the files is complete and tested by the FullStack tests.
