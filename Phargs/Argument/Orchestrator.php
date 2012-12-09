@@ -67,6 +67,10 @@ class Orchestrator {
     return true;
   }
 
+  public function requireParam($param, $description = ''){
+    return $this->expectParam($param, $description, true);
+  }
+
   public function addParamAlias($param, $alias){
     if ($this->parser->addParamAlias($param, $alias)){
       $this->params[$param]->aliases[] = $alias;

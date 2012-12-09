@@ -86,6 +86,22 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
   }
 
+  public function testRequiredParams(){
+    list($output, $exitCode) = $this->execExample('RequiredParams', '--count=4 --number=5');
+    $this->assertEquals(
+      array('All arg requirements are met'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    list($output, $exitCode) = $this->execExample('RequiredParams', '--count=4');
+    $this->assertEquals(
+      array('Not all arg requirements are met'), 
+      $output, "Output should have matched expected"
+    );
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+  }
+
   public function testParamAliases(){
     list($output, $exitCode) = $this->execExample('ParamAliases', '--count 5');
     $this->assertEquals(

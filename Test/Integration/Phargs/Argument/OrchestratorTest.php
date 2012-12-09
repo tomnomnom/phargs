@@ -106,6 +106,23 @@ class OrchestratorTest extends \PHPUnit_Framework_TestCase {
     $this->assertFalse($o->requirementsAreMet(), "Orchestrator requirements should not be met");
   }
 
+  public function testRequireParamShortcut(){
+    $o = $this->newOrchestrator(array('./command', '--number=5', '--cheese=chedder'));
+    $o->requireParam('--cheese', 'Test param', false);
+    $o->requireParam('--number', 'Test param', true);
+    $o->requireParam('--count', 'Test param', true);
+
+    $this->assertTrue($o->paramIsSet('--cheese'), "Param [--cheese] should be set");
+    $this->assertEquals('chedder', $o->getParamValue('--cheese'), "Param [--cheese] value should be [chedder]");
+
+    $this->assertTrue($o->paramIsSet('--number'), "Param [--number] should be set");
+    $this->assertEquals('5', $o->getParamValue('--number'), "Param [--number] value should be [5]");
+
+    $this->assertFalse($o->paramIsSet('--count'), "Param [--count] should not be set");
+
+    $this->assertFalse($o->requirementsAreMet(), "Orchestrator requirements should not be met");
+  }
+
   public function testGetExpectedFlags(){
     $o = $this->newOrchestrator(); 
     $o->expectFlag('-h');
