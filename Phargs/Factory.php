@@ -7,7 +7,9 @@ class Factory {
   }
 
   public function screen(){
-    return new \Phargs\Screen();
+    return new \Phargs\Io\Screen(
+      new \Phargs\Io\Writer\Stdout()
+    );
   }
 
   public function args($argv = null){

@@ -15,7 +15,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase {
   public function testScreen(){
     $f = $this->newFactory();
     $s = $f->screen();
-    $this->assertInstanceOf('\\Phargs\\Screen', $s, "Returned object should be instance of [\\Phargs\\Screen]");
+    $this->assertInstanceOf('\\Phargs\\Io\\Screen', $s, "Returned object should be instance of [\\Phargs\\Io\\Screen]");
   }
 
   public function testArgumentOrchestrator(){

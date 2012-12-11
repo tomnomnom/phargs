@@ -1,7 +1,7 @@
 <?php
-namespace Phargs;
+namespace Phargs\Io\Writer;
 
-class Screen {
+class Stdout extends \Phargs\Io\Writer {
   protected $colors = array(
     'black'  => 0,
     'red'    => 1,
@@ -18,22 +18,15 @@ class Screen {
     'underline' => 4
   );
 
-  public function __construct(){
-    
-  }
-
-  public function out($msg, $fg = null, $bg = null, $style = null){
-    if ($fg || $bg){
-      $msg = $this->colorize($msg, $fg, $bg, $style);
-    }
+  public function write($msg){
     return fputs(STDOUT, $msg);
   }
 
-  public function outln($msg, $fg = null, $bg = null, $style = null){
-    return $this->out($msg.PHP_EOL, $fg, $bg, $style);
+  public function error($msg){
+    return fputs(STDERR, $msg);
   }
 
-  public function colorize($string, $fg = null, $bg = null, $style = null){
+  public function stylize($string, $fg = null, $bg = null, $style = null){
     if (!isset($this->colors[$fg])){
       $fg = null;
     }
@@ -63,27 +56,5 @@ class Screen {
     $resetEscape = "\033[0m";
 
     return $fgEscape.$bgEscape.$string.$resetEscape;
-  }
-
-  public function err($msg){
-    return fputs(STDERR, $msg);
-  }
-
-  public function errln($msg){
-    return $this->err($msg.PHP_EOL);
-  }
-
-  public function printf(){
-    return $this->out(
-      call_user_func_array('sprintf', func_get_args)
-    );
-  }
-
-  public function varExport($var){
-    return $this->outln(var_export($var, true));
-  }
-
-  public function log($msg){
-    return $this->outln(date('c').': '.$msg);
   }
 }
