@@ -3,7 +3,7 @@ namespace Test\FullStack\Phargs;
 
 class ExamplesTest extends \PHPUnit_Framework_TestCase {
   
-  protected function execExample($example, $argString){
+  protected function execExample($example, $argString = ''){
     exec("php ".__DIR__.'/../../../Examples/'.$example.'.php '.$argString, $output, $exitCode);
     return array($output, $exitCode);
   }
@@ -167,4 +167,13 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
   }
 
+  public function testScreenBasic(){
+    list($output, $exitCode) = $this->execExample('ScreenBasic');
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    $this->assertContains('Hello, World!', $output, "Output should have contained [Hello, World!]");
+    $this->assertContains('Hello, World!', $output, "Output should have contained [Error message]");
+    $this->assertContains('When in Rome', $output, "Output should have contained [When in rome]");
+    $this->assertContains('array (', $output, "Output should have contained [array (]");
+  }
 }
