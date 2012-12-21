@@ -55,19 +55,17 @@ class Parser {
 
       // At this stage it could be compound flags
       //   e.g. -Hnri
-      // We should only assume this if all chars are valid flags
+      // If the first candidate is a flag and not a param we can
+      // assume the rest are potential flags
       $flagCandidates = str_split(subStr($arg, 1));
-      $potentialCandidates = sizeOf($flagCandidates);
-      $validCandidates = 0;
-      foreach ($flagCandidates as $flagCandidate){
-        if ($this->isFlag("-{$flagCandidate}")){
-          $validCandidates++;
-        }
-      }
-      if ($validCandidates == $potentialCandidates){
+      $firstFlagCandidate = subStr($arg, 0, 2);
+      if ($this->isFlag($firstFlagCandidate) && !$this->isParam($firstFlagCandidate)){
+
         foreach ($flagCandidates as $flagCandidate){
-          $this->setFlag("-{$flagCandidate}"); 
+          if (!$this->isFlag("-{$flagCandidate}")) continue;
+          $this->setFlag("-{$flagCandidate}");
         }
+
         continue;
       }
 

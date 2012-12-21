@@ -59,7 +59,10 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
 
     list($output, $exitCode) = $this->execExample('CompoundFlags', '-Hni');
-    $this->assertEquals(array(), $output, "Output should have matched expected");
+    $this->assertEquals(
+      array('-H flag is set', '-n flag is set'), 
+      $output, "Output should have matched expected"
+    );
     $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
   }
 

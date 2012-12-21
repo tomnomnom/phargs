@@ -79,8 +79,7 @@ if ($args->flagIsSet('-h')){
     Help flag is set
 
 #### Compound flags
-Phargs also supports *compound flags*; like how you might run `grep -Hnr $searchString *`. Note that if one of the
-flags in the compound string isn't expected, none of the flags will be set.
+Phargs also supports *compound flags*; like how you might run `grep -Hnr $searchString *`.
 
 ```php
 <?php
@@ -113,7 +112,9 @@ if ($args->flagIsSet('-r')){
     -H flag is set
     -n flag is set
     -r flag is set
-    ▶ php ./Examples/CompoundFlags.php -Hnri
+    ▶ php ./Examples/CompoundFlags.php -Hni # Note: 'i' is unexpected
+    -H flag is set
+    -n flag is set
     ▶ php ./Examples/CompoundFlags.php -n -r
     -n flag is set
     -r flag is set
