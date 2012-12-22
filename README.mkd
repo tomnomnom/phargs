@@ -299,6 +299,34 @@ $screen->outln("Hello, {$name}!");
     What is your name? Tom
     Hello, Tom!
 
+### Required input 
+You can also require that a user input some information, optionally displaying a message when they don't. 
+
+```php
+<?php
+// ./Examples/PrompterRequired.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+$screen = $factory->screen();
+
+// Get a prompter
+$prompter = $factory->prompter();
+
+// Prompt for some required input
+$name = $prompter->promptRequired('What is your name? ', 'No name entered!');
+
+// Do something with the response
+$screen->outln("Hello, {$name}!");
+```
+
+    ▶ php ./Examples/PrompterRequired.php 
+    What is your name? 
+    No name entered!
+    What is your name? Tom
+    Hello, Tom!
+
+
 ## Requirements
 
 * Linux of some description
