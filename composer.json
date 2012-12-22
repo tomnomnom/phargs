@@ -1,13 +1,16 @@
 {
     "name": "tomnomnom/phargs",
     "description": "A toolkit for writing CLI scripts in PHP",
+    "homepage": "https://github.com/TomNomNom/phargs/",
+    "license": "MIT",
     "require-dev": {
 
     },
     "authors": [
         {
             "name": "Tom Hudson",
-            "email": "mail@tomnomnom.com"
+            "email": "mail@tomnomnom.com",
+            "homepage": "http://tomhudson.co.uk/"
         }
     ],
     "require": {
