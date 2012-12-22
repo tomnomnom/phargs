@@ -9,6 +9,27 @@ things easier too.
 
 Everything in Phargs is available through `\Phargs\Factory`.
 
+## Contents
+This README file is a little long, so here's a breakdown of the contents to make navigation a little easier.
+
+* [Argument processing](#argument-processing)
+  - [Flags - Intro](#flags)
+  - [Flags - Basic usage](#basic-usage)
+  - [Flags - Flag aliases](#flag-aliases)
+  - [Flags - Compound flags](#compound-flags)
+  - [Params - Intro](#params)
+  - [Params - Basic usage](#basic-usage-1)
+  - [Params - Param aliases](#param-aliases)
+  - [Params - Required params](#required-params)
+  - [Residual args](#residual-args)
+* [Outputting to the screen](#outputting-to-the-screen)
+  - [Basic usage](#basic-usage-2)
+* [Prompting for input](#prompting-for-input)
+  - [Basic usage](#basic-usage-3)
+  - [Required input](#required-input)
+* [Requirements](#requirements)
+* [Testing](#testing)
+
 ## Argument processing
 The [getopt](http://php.net/manual/en/function.getopt.php) interface isn't the most friendly thing in the world,
 Phargs tries to make your life a bit easier.
@@ -272,10 +293,58 @@ echo "First two residual args: ".implode(', ', $args->getResidualArgs(0, 2)).PHP
     First two residual args: help, merge
 
 
+## Outputting to the screen
+Phargs provides an interface for outputting text to the screen.
+
+The screen interface is available via `\Phargs\Factory::screen()`.
+
+### Basic usage
+Amongst other things, the screen interface provides methods to write to `stdout` and `stderr`, with or 
+without trailing newline characters. It also provides some methods that are useful when debugging.
+
+```php
+<?php
+// ./Examples/ScreenBasic.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+
+// Get a screen interface
+$screen = $factory->screen();
+
+$screen->out("Hello, ");
+$screen->outln("World!");
+
+$screen->err("Error ");
+$screen->errln("message");
+
+$screen->printf("When in %s".PHP_EOL, "Rome");
+
+$testVar = array(1, 2, 3);
+$screen->varExport($testVar);
+
+$screen->log('A log message');
+```
+
+    ▶ php ./Examples/ScreenBasic.php 
+    Hello, World!
+    Error message
+    When in Rome
+    array (
+      0 => 1,
+      1 => 2,
+      2 => 3,
+    )
+    2012-12-22T15:16:50+00:00: A log message
+
+
 ## Prompting for input
 Phargs has an interface for prompting for user input. 
 
 The prompter is available via `\Phargs\Factory::prompter()`.
+
+### Basic usage
+The `prompt` method can be used to *prompt* the user for some input. The trailing newline character is removed.
 
 ```php
 <?php
