@@ -8,6 +8,12 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     return array($output, $exitCode);
   }
 
+  protected function execExampleStdin($example, $stdin = '', $argString = ''){
+    $stdin = escapeshellarg($stdin);
+    exec("echo {$stdin} | php ".__DIR__.'/../../../Examples/'.$example.'.php '.$argString, $output, $exitCode);
+    return array($output, $exitCode);
+  }
+
   public function testFlags(){
     list($output, $exitCode) = $this->execExample('Flags', '-h');
     $this->assertEquals(array('Help flag is set'), $output, "Output should have matched expected");
@@ -178,5 +184,12 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertContains('Hello, World!', $output, "Output should have contained [Error message]");
     $this->assertContains('When in Rome', $output, "Output should have contained [When in rome]");
     $this->assertContains('array (', $output, "Output should have contained [array (]");
+  }
+
+  public function testPrompterBasic(){
+    list($output, $exitCode) = $this->execExampleStdin('PrompterBasic', 'Tom');
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    $this->assertContains("What is your name? Hello, Tom!", $output, "Output should have matched expected");
   }
 }
