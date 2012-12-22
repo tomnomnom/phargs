@@ -1,0 +1,16 @@
+{
+    "name": "tomnomnom/phargs",
+    "description": "A toolkit for writing CLI scripts in PHP",
+    "require-dev": {
+
+    },
+    "authors": [
+        {
+            "name": "Tom Hudson",
+            "email": "mail@tomnomnom.com"
+        }
+    ],
+    "require": {
+
+    }
+}
