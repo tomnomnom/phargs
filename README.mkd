@@ -7,12 +7,12 @@ suggestions are always welcome.
 Phargs' main asset so far is its argument processor, although I am working on tools to make other 
 things easier too.
 
+Everything in Phargs is available through `\Phargs\Factory`.
 
 ## Argument processing
 The [getopt](http://php.net/manual/en/function.getopt.php) interface isn't the most friendly thing in the world,
 Phargs tries to make your life a bit easier.
-
-Everything in Phargs is available through `\Phargs\Factory`. 
+ 
 The argument processor is available via `\Phargs\Factory::args()`.
 
 ### Flags
@@ -271,6 +271,33 @@ echo "First two residual args: ".implode(', ', $args->getResidualArgs(0, 2)).PHP
     All residual args: help, merge, this, thing
     First two residual args: help, merge
 
+
+## Prompting for input
+Phargs has an interface for prompting for user input. 
+
+The prompter is available via `\Phargs\Factory::prompter()`.
+
+```php
+<?php
+// ./Examples/PrompterBasic.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+$screen = $factory->screen();
+
+// Get a prompter
+$prompter = $factory->prompter();
+
+// Prompt for some input
+$name = $prompter->prompt('What is your name? ');
+
+// Do something with the response
+$screen->outln("Hello, {$name}!");
+```
+
+    ▶ php ./Examples/PrompterBasic.php 
+    What is your name? Tom
+    Hello, Tom!
 
 ## Requirements
 
