@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Phargs : A toolkit for writing CLI scripts in PHP" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Phargs</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/TomNomNom/phargs">View on GitHub</a>
+
+          <h1 id="project_title">Phargs</h1>
+          <h2 id="project_tagline">A toolkit for writing CLI scripts in PHP</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/TomNomNom/phargs/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/TomNomNom/phargs/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Phargs</h1>
+
+<p>Phargs is a toolkit for writing CLI scripts in PHP; it was born out of frustration, anger, and 
+boilerplate déjà vu. It is still very much a work in progress. Pull requests, issues, and 
+suggestions are always welcome.</p>
+
+<p>Phargs' main asset so far is its argument processor, although I am working on tools to make other 
+things easier too.</p>
+
+<p>Everything in Phargs is available through <code>\Phargs\Factory</code>.</p>
+
+<h2>Contents</h2>
+
+<p>This README file is a little long, so here's a breakdown of the contents to make navigation a little easier.</p>
+
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li>
+<a href="#argument-processing">Argument processing</a>
+
+<ul>
+<li><a href="#flags">Flags - Intro</a></li>
+<li><a href="#basic-usage">Flags - Basic usage</a></li>
+<li><a href="#flag-aliases">Flags - Flag aliases</a></li>
+<li><a href="#compound-flags">Flags - Compound flags</a></li>
+<li><a href="#params">Params - Intro</a></li>
+<li><a href="#basic-usage-1">Params - Basic usage</a></li>
+<li><a href="#param-aliases">Params - Param aliases</a></li>
+<li><a href="#required-params">Params - Required params</a></li>
+<li><a href="#residual-args">Residual args</a></li>
+</ul>
+</li>
+<li>
+<a href="#outputting-to-the-screen">Outputting to the screen</a>
+
+<ul>
+<li><a href="#basic-usage-2">Basic usage</a></li>
+</ul>
+</li>
+<li>
+<a href="#prompting-for-input">Prompting for input</a>
+
+<ul>
+<li><a href="#basic-usage-3">Basic usage</a></li>
+<li><a href="#required-input">Required input</a></li>
+</ul>
+</li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#testing">Testing</a></li>
+</ul><h2>Installation</h2>
+
+<p>Phargs is available on <a href="https://packagist.org/packages/tomnomnom/phargs">Packagist</a> so you can 
+install it using <a href="http://getcomposer.org/">Composer</a>. Just specify it as a dependency in your 
+<code>composer.json</code>:</p>
+
+<div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">"require"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">"tomnomnom/phargs"</span><span class="p">:</span> <span class="s2">"0.0.2"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Then run <code>composer install</code>:</p>
+
+<pre><code>▶ composer install
+Loading composer repositories with package information
+Installing dependencies
+  - Installing tomnomnom/phargs (0.0.2)
+    Loading from cache
+
+Writing lock file
+Generating autoload files
+</code></pre>
+
+<p>Once installed you can use the composer autoloader instead of the <code>Phargs/Init.php</code> script that 
+the included examples use:</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">require</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/vendor/autoload.php'</span><span class="p">;</span>
+
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$screen</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">screen</span><span class="p">();</span>
+
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">outln</span><span class="p">(</span><span class="s2">"Hello, World!"</span><span class="p">);</span>
+</pre></div>
+
+<h2>Argument processing</h2>
+
+<p>The <a href="http://php.net/manual/en/function.getopt.php">getopt</a> interface isn't the most friendly thing in the world,
+Phargs tries to make your life a bit easier.</p>
+
+<p>The argument processor is available via <code>\Phargs\Factory::args()</code>.</p>
+
+<h3>Flags</h3>
+
+<p>A <em>flag</em> is an argument that turns functionality on or off. Common examples are <code>-h</code> to display 
+a help message or <code>--verbose</code> to display more output. </p>
+
+<h4>Basic usage</h4>
+
+<p>Phargs needs to be told to <em>expect</em> a flag in order to use it.</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/Flags.php</span>
+
+<span class="c1">// Bootstrap Phargs</span>
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+
+<span class="c1">// Everything in Phargs is available via the Factory</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+
+<span class="c1">// Get an argument processor</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">args</span><span class="p">();</span>
+
+<span class="c1">// Expect the -h flag to be an argument</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectFlag</span><span class="p">(</span><span class="s1">'-h'</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">flagIsSet</span><span class="p">(</span><span class="s1">'-h'</span><span class="p">)){</span>
+  <span class="k">echo</span> <span class="s2">"Help flag is set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="k">echo</span> <span class="s2">"Help flag is not set"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/Flags.php -h
+Help flag is set
+▶ php ./Examples/Flags.php
+Help flag is not set
+</code></pre>
+
+<h4>Flag aliases</h4>
+
+<p>You can <em>alias</em> flags to make your script more user friendly. Phargs supports both 
+long (e.g. <code>--help</code>) and short (e.g. <code>-h</code>) flags.</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/FlagAliases.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">args</span><span class="p">();</span>
+
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectFlag</span><span class="p">(</span><span class="s1">'-h'</span><span class="p">);</span>
+
+<span class="c1">// Alias the -h flag to --help so either can be used</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">addFlagAlias</span><span class="p">(</span><span class="s1">'-h'</span><span class="p">,</span> <span class="s1">'--help'</span><span class="p">);</span>
+
+<span class="c1">// You could check for --help instead of -h here and it would still work</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">flagIsSet</span><span class="p">(</span><span class="s1">'-h'</span><span class="p">)){</span>
+  <span class="k">echo</span> <span class="s2">"Help flag is set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="k">echo</span> <span class="s2">"Help flag is not set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/FlagAliases.php -h
+Help flag is set
+▶ php ./Examples/FlagAliases.php --help
+Help flag is set
+</code></pre>
+
+<h4>Compound flags</h4>
+
+<p>Phargs also supports <em>compound flags</em>; like how you might run <code>grep -Hnr $searchString *</code>.</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/CompoundFlags.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">args</span><span class="p">();</span>
+
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectFlag</span><span class="p">(</span><span class="s1">'-H'</span><span class="p">);</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectFlag</span><span class="p">(</span><span class="s1">'-n'</span><span class="p">);</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectFlag</span><span class="p">(</span><span class="s1">'-r'</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">flagIsSet</span><span class="p">(</span><span class="s1">'-H'</span><span class="p">)){</span>
+  <span class="k">echo</span> <span class="s2">"-H flag is set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">flagIsSet</span><span class="p">(</span><span class="s1">'-n'</span><span class="p">)){</span>
+  <span class="k">echo</span> <span class="s2">"-n flag is set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">flagIsSet</span><span class="p">(</span><span class="s1">'-r'</span><span class="p">)){</span>
+  <span class="k">echo</span> <span class="s2">"-r flag is set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/CompoundFlags.php -Hnr
+-H flag is set
+-n flag is set
+-r flag is set
+▶ php ./Examples/CompoundFlags.php -H -nr
+-H flag is set
+-n flag is set
+-r flag is set
+▶ php ./Examples/CompoundFlags.php -Hni # Note: 'i' is unexpected
+-H flag is set
+-n flag is set
+▶ php ./Examples/CompoundFlags.php -n -r
+-n flag is set
+-r flag is set
+</code></pre>
+
+<h3>Params</h3>
+
+<p>A <em>param</em> is an argument that provides a value. They come in 4 flavours:</p>
+
+<ul>
+<li>Long, with an equals (e.g. <code>--count=5</code>)</li>
+<li>Long, with a space (e.g. <code>--count 5</code>)</li>
+<li>Short, with a space (e.g. <code>-c 5</code>)</li>
+<li>Short, without a space (e.g. <code>-c5</code>)</li>
+</ul><h4>Basic usage</h4>
+
+<p>Like with flags, you must tell Phargs to <em>expect</em> a param. Unlike flags, you can also get the 
+<em>value</em> of a param:</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/Params.php</span>
+
+<span class="c1">// Bootstrap Phargs</span>
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+
+<span class="c1">// Everything in Phargs is available via the Factory</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+
+<span class="c1">// Get an argument processor</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">args</span><span class="p">();</span>
+
+<span class="c1">// Expect the --count param</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectParam</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">paramIsSet</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">)){</span>
+  <span class="k">echo</span> <span class="s2">"--count param is set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="s2">"--count value is: "</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="nv">$args</span><span class="o">-&gt;</span><span class="na">getParamValue</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">)</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="k">echo</span> <span class="s2">"--count param is not set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/Params.php --count=5
+--count param is set
+--count value is: 5
+▶ php ./Examples/Params.php --count 5
+--count param is set
+--count value is: 5
+▶ php ./Examples/Params.php --help
+--count param is not set
+</code></pre>
+
+<h4>Param aliases</h4>
+
+<p>Like flags, params can be aliased:</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/ParamAliases.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">args</span><span class="p">();</span>
+
+<span class="c1">// Expect the --count param</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectParam</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">);</span>
+
+<span class="c1">// Alias --count to -c so that either can be used</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">addParamAlias</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">,</span> <span class="s1">'-c'</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">paramIsSet</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">)){</span>
+  <span class="k">echo</span> <span class="s2">"--count param is set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="s2">"--count value is: "</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="nv">$args</span><span class="o">-&gt;</span><span class="na">getParamValue</span><span class="p">(</span><span class="s1">'-c'</span><span class="p">)</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="k">echo</span> <span class="s2">"--count param is not set</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/ParamAliases.php --count=5
+--count param is set
+--count value is: 5
+▶ php ./Examples/ParamAliases.php -c 5
+--count param is set
+--count value is: 5
+▶ php ./Examples/ParamAliases.php -c5
+--count param is set
+--count value is: 5
+</code></pre>
+
+<h4>Required params</h4>
+
+<p>In the examples so far Phargs has <em>expected</em> to see params, but it doesn't mind if they're not there. 
+If a param is important enough you can <em>require</em> that it exists and then check that all requirements are met:</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/RequiredParams.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">args</span><span class="p">();</span>
+
+<span class="c1">// Require some params</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">requireParam</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">);</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">requireParam</span><span class="p">(</span><span class="s1">'--number'</span><span class="p">);</span>
+
+<span class="c1">// Check that all argument requirements are met</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">requirementsAreMet</span><span class="p">()){</span>
+  <span class="k">echo</span> <span class="s2">"All arg requirements are met</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="k">echo</span> <span class="s2">"Not all arg requirements are met</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/RequiredParams.php --count=4 --number=5
+All arg requirements are met
+▶ php ./Examples/RequiredParams.php --count=4 
+Not all arg requirements are met
+</code></pre>
+
+<h3>Residual args</h3>
+
+<p><em>Residual args</em> are the arguments left over when expected params and flags have been removed. For example:</p>
+
+<pre><code>./command -v help merge
+</code></pre>
+
+<p>Assuming the <code>-v</code> flag is expected by Phargs: <code>help</code> and <code>merge</code> are considered to be residual args. Residual
+args are zero-indexed, and their indexes remain the same regardless of where any expected flags or params
+appear in the argument list. </p>
+
+<p>You can get one, all, or a range of residual args:</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/ResidualArgs.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">args</span><span class="p">();</span>
+
+<span class="c1">// We're expecting some arguments</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectParam</span><span class="p">(</span><span class="s1">'--count'</span><span class="p">);</span>
+<span class="nv">$args</span><span class="o">-&gt;</span><span class="na">expectFlag</span><span class="p">(</span><span class="s1">'-h'</span><span class="p">);</span>
+
+<span class="c1">// Arguments we're not expecting are considered 'residual'</span>
+<span class="k">echo</span> <span class="s2">"Residual arg #0: "</span><span class="o">.</span><span class="nv">$args</span><span class="o">-&gt;</span><span class="na">getResidualArg</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"All residual args: "</span><span class="o">.</span><span class="nb">implode</span><span class="p">(</span><span class="s1">', '</span><span class="p">,</span> <span class="nv">$args</span><span class="o">-&gt;</span><span class="na">getResidualArgs</span><span class="p">())</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"First two residual args: "</span><span class="o">.</span><span class="nb">implode</span><span class="p">(</span><span class="s1">', '</span><span class="p">,</span> <span class="nv">$args</span><span class="o">-&gt;</span><span class="na">getResidualArgs</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/ResidualArgs.php -h help merge
+Residual arg #0: help
+All residual args: help, merge
+First two residual args: help, merge
+▶ php ./Examples/ResidualArgs.php help -h merge
+Residual arg #0: help
+All residual args: help, merge
+First two residual args: help, merge
+▶ php ./Examples/ResidualArgs.php help -h merge this thing
+Residual arg #0: help
+All residual args: help, merge, this, thing
+First two residual args: help, merge
+</code></pre>
+
+<h2>Outputting to the screen</h2>
+
+<p>Phargs provides an interface for outputting text to the screen.</p>
+
+<p>The screen interface is available via <code>\Phargs\Factory::screen()</code>.</p>
+
+<h3>Basic usage</h3>
+
+<p>Amongst other things, the screen interface provides methods to write to <code>stdout</code> and <code>stderr</code>, with or 
+without trailing newline characters. It also provides some methods that are useful when debugging.</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/ScreenBasic.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+
+<span class="c1">// Get a screen interface</span>
+<span class="nv">$screen</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">screen</span><span class="p">();</span>
+
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">out</span><span class="p">(</span><span class="s2">"Hello, "</span><span class="p">);</span>
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">outln</span><span class="p">(</span><span class="s2">"World!"</span><span class="p">);</span>
+
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">err</span><span class="p">(</span><span class="s2">"Error "</span><span class="p">);</span>
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">errln</span><span class="p">(</span><span class="s2">"message"</span><span class="p">);</span>
+
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">printf</span><span class="p">(</span><span class="s2">"When in %s"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">,</span> <span class="s2">"Rome"</span><span class="p">);</span>
+
+<span class="nv">$testVar</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">varExport</span><span class="p">(</span><span class="nv">$testVar</span><span class="p">);</span>
+
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">log</span><span class="p">(</span><span class="s1">'A log message'</span><span class="p">);</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/ScreenBasic.php 
+Hello, World!
+Error message
+When in Rome
+array (
+  0 =&gt; 1,
+  1 =&gt; 2,
+  2 =&gt; 3,
+)
+2012-12-22T15:16:50+00:00: A log message
+</code></pre>
+
+<h2>Prompting for input</h2>
+
+<p>Phargs has an interface for prompting for user input. </p>
+
+<p>The prompter is available via <code>\Phargs\Factory::prompter()</code>.</p>
+
+<h3>Basic usage</h3>
+
+<p>The <code>prompt</code> method can be used to <em>prompt</em> the user for some input. The trailing newline character is removed.</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/PrompterBasic.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$screen</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">screen</span><span class="p">();</span>
+
+<span class="c1">// Get a prompter</span>
+<span class="nv">$prompter</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">prompter</span><span class="p">();</span>
+
+<span class="c1">// Prompt for some input</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$prompter</span><span class="o">-&gt;</span><span class="na">prompt</span><span class="p">(</span><span class="s1">'What is your name? '</span><span class="p">);</span>
+
+<span class="c1">// Do something with the response</span>
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">outln</span><span class="p">(</span><span class="s2">"Hello, </span><span class="si">{</span><span class="nv">$name</span><span class="si">}</span><span class="s2">!"</span><span class="p">);</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/PrompterBasic.php 
+What is your name? Tom
+Hello, Tom!
+</code></pre>
+
+<h3>Required input</h3>
+
+<p>You can also require that a user input some information, optionally displaying a message when they don't. </p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// ./Examples/PrompterRequired.php</span>
+
+<span class="k">include</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../Phargs/Init.php'</span><span class="p">;</span>
+<span class="nv">$factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phargs\Factory</span><span class="p">();</span>
+<span class="nv">$screen</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">screen</span><span class="p">();</span>
+
+<span class="c1">// Get a prompter</span>
+<span class="nv">$prompter</span> <span class="o">=</span> <span class="nv">$factory</span><span class="o">-&gt;</span><span class="na">prompter</span><span class="p">();</span>
+
+<span class="c1">// Prompt for some required input</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$prompter</span><span class="o">-&gt;</span><span class="na">promptRequired</span><span class="p">(</span><span class="s1">'What is your name? '</span><span class="p">,</span> <span class="s1">'No name entered!'</span><span class="p">);</span>
+
+<span class="c1">// Do something with the response</span>
+<span class="nv">$screen</span><span class="o">-&gt;</span><span class="na">outln</span><span class="p">(</span><span class="s2">"Hello, </span><span class="si">{</span><span class="nv">$name</span><span class="si">}</span><span class="s2">!"</span><span class="p">);</span>
+</pre></div>
+
+<pre><code>▶ php ./Examples/PrompterRequired.php 
+What is your name? 
+No name entered!
+What is your name? Tom
+Hello, Tom!
+</code></pre>
+
+<h2>Requirements</h2>
+
+<ul>
+<li>Linux of some description</li>
+<li>PHP 5.3 or newer</li>
+</ul><h2>Testing</h2>
+
+<p>You can run the full test suite by running:</p>
+
+<pre><code>▶ phpunit
+</code></pre>
+
+<p>The tests are actually split up into 3 suites, which can be run individually:</p>
+
+<pre><code>▶ phpunit --filter Unit
+▶ phpunit --filter Integration
+▶ phpunit --filter FullStack
+</code></pre>
+
+<p>The repo is hooked up to Travis CI. You can see the state of the master branch and the 
+build history on the <a href="https://travis-ci.org/TomNomNom/phargs">Phargs Travis CI page</a>.
+The full test suite runs under PHP 5.3 and PHP 5.4.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Phargs maintained by <a href="https://github.com/TomNomNom">TomNomNom</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
