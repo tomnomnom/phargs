@@ -15,5 +15,8 @@
     ],
     "require": {
 
+    },
+    "autoload": {
+        "psr-0": {"Phargs": "./"}
     }
 }
