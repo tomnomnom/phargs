@@ -12,6 +12,7 @@ Everything in Phargs is available through `\Phargs\Factory`.
 ## Contents
 This README file is a little long, so here's a breakdown of the contents to make navigation a little easier.
 
+* [Installation](#installation)
 * [Argument processing](#argument-processing)
   - [Flags - Intro](#flags)
   - [Flags - Basic usage](#basic-usage)
@@ -29,6 +30,46 @@ This README file is a little long, so here's a breakdown of the contents to make
   - [Required input](#required-input)
 * [Requirements](#requirements)
 * [Testing](#testing)
+
+## Installation 
+
+Phargs is available on [Packagist](https://packagist.org/packages/tomnomnom/phargs) so you can 
+install it using [Composer](http://getcomposer.org/). Just specify it as a dependency in your 
+`composer.json`:
+
+```json
+{
+    "require": {
+        "tomnomnom/phargs": "0.0.2"
+    }
+}
+```
+
+Then run `composer install`:
+
+    ▶ composer install
+    Loading composer repositories with package information
+    Installing dependencies
+      - Installing tomnomnom/phargs (0.0.2)
+        Loading from cache
+    
+    Writing lock file
+    Generating autoload files
+
+
+Once installed you can use the composer autoloader instead of the `Phargs/Init.php` script that 
+the included examples use:
+
+```php
+<?php
+require __DIR__.'/vendor/autoload.php';
+
+$factory = new \Phargs\Factory();
+$screen = $factory->screen();
+
+$screen->outln("Hello, World!");
+```
+
 
 ## Argument processing
 The [getopt](http://php.net/manual/en/function.getopt.php) interface isn't the most friendly thing in the world,
