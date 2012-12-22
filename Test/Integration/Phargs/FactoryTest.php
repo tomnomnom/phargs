@@ -23,4 +23,10 @@ class FactoryTest extends \PHPUnit_Framework_TestCase {
     $a = $f->args();
     $this->assertInstanceOf('\\Phargs\\Argument\\Orchestrator', $a, "Returned object should be instance of [\\Phargs\\Argument\\Orchestrator]");
   }
+
+  public function testArgumentPrompter(){
+    $f = $this->newFactory();
+    $p = $f->prompter();
+    $this->assertInstanceOf('\\Phargs\\Io\\Prompter', $p, "Returned object should be instance of [\\Phargs\\Io\\Prompter]");
+  }
 }

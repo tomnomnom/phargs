@@ -20,4 +20,12 @@ class Factory {
       new \Phargs\Argument\Parser(), $argv
     );
   }
+
+  public function prompter(){
+    return new \Phargs\Io\Prompter(
+      new \Phargs\Io\Reader\Stdin(),
+      new \Phargs\Io\Writer\Stdout()
+    );
+  }
+
 }
