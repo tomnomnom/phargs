@@ -46,7 +46,21 @@ class PrompterTest extends \PHPUnit_Framework_TestCase {
     $r->setBuffer('Tom '.PHP_EOL);
     $name = $p->prompt('Name: ');
 
-    $this->assertEquals('Tom ', $name, "Value should have matched [Tom]");
     $this->assertEquals('Name: ', $w->lastMsg, "Last written message should have matched [Name: ]");
+  }
+
+  public function testPromptRequired(){
+    list($p, $r, $w) = $this->newTestObjs();
+
+    $r->setBuffer(PHP_EOL.PHP_EOL."Tom".PHP_EOL); 
+    $name = $p->promptRequired('Name: ', 'No name entered!');
+    
+    $this->assertEquals('Tom', $name, "Value should have matched [Tom]");
+    $this->assertEquals(
+      "Name: No name entered!".PHP_EOL.
+      "Name: No name entered!".PHP_EOL.
+      "Name: ", 
+      $w->allMsgs, "Output should have matched expected"
+    );
   }
 }

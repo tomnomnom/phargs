@@ -16,4 +16,15 @@ class Prompter {
 
     return rtrim($entered, PHP_EOL);
   } 
+
+  public function promptRequired($msg, $emptyMsg = ''){
+    do {
+      $response = $this->prompt($msg);
+      if (!$response && $emptyMsg){
+        $this->writer->write($emptyMsg.PHP_EOL);
+      }
+    } while(!$response);
+
+    return $response;
+  }
 }

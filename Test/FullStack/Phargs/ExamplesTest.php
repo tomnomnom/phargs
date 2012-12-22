@@ -192,4 +192,12 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertContains("What is your name? Hello, Tom!", $output, "Output should have matched expected");
   }
+
+  public function testPrompterRequired(){
+    list($output, $exitCode) = $this->execExampleStdin('PrompterRequired', PHP_EOL.PHP_EOL.'Tom');
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    $this->assertContains("What is your name? No name entered!", $output, "Output should have matched expected");
+    $this->assertContains("What is your name? Hello, Tom!", $output, "Output should have matched expected");
+  }
 }

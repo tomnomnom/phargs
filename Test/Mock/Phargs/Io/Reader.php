@@ -14,11 +14,13 @@ class Reader extends \Phargs\Io\Reader {
     $output = '';
 
     if (is_null($length)){
-      // Read until EOL
-      foreach ($chars as $char){
+      // Read until EOL or EOF
+      $start = $this->pointer;
+      $stop = strlen($this->buffer);
+      for ($i = $start; $i < $stop; $i++){
         $this->pointer++;
-        $output .= $char;
-        if ($char == PHP_EOL) break;
+        $output .= $chars[$i];
+        if ($chars[$i] == PHP_EOL) break;
       }
     } else {
       // Read up to $length
