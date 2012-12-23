@@ -9,6 +9,7 @@ class Table {
 
   protected $vertChar = '|';
   protected $horizChar = '-';
+  protected $cornerChar = '+';
 
   public function __construct(Array $fields = array()){
     $this->setFields($fields); 
@@ -76,17 +77,25 @@ class Table {
     return $out;
   }
 
-  public function getTableString(){
-    $tableWidth = $this->getTableWidth();
+  protected function getRowSeparatorString() {
+    $out = $this->cornerChar;
 
+    for ($i = 0; $i < $this->fieldCount; $i++){
+      $out .= str_repeat($this->horizChar, $this->fieldWidths[$i] + 2).$this->cornerChar;
+    }
+
+    return $out.PHP_EOL;
+  }
+
+  public function getTableString(){
     // Top
-    $out = str_repeat($this->horizChar, $tableWidth).PHP_EOL;
+    $out = $this->getRowSeparatorString();
     
     // Headings
     $out .= $this->getRowString($this->fields).PHP_EOL;
 
     // Divider
-    $out .= str_repeat($this->horizChar, $tableWidth).PHP_EOL;
+    $out .= $this->getRowSeparatorString();
 
     // Rows 
     foreach ($this->rows as $row){
@@ -94,7 +103,7 @@ class Table {
     }
 
     // Bottom
-    $out .= str_repeat($this->horizChar, $tableWidth).PHP_EOL;
+    $out .= $this->getRowSeparatorString();
     
     return $out;
   }
