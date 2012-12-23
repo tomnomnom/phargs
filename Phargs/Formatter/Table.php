@@ -55,6 +55,13 @@ class Table {
     $this->setFieldWidths($row);
   }
 
+  public function addRows(Array $rows){
+    foreach ($rows as $row){
+      if (!is_array($row)) continue;
+      $this->addRow($row);
+    }
+  }
+
   protected function getRowString(Array $row){
     for ($i = 0; $i < $this->fieldCount; $i++){
       $finalWidth = $this->fieldWidths[$i];
@@ -90,6 +97,10 @@ class Table {
     $out .= str_repeat($this->horizChar, $tableWidth).PHP_EOL;
     
     return $out;
+  }
+
+  public function __toString(){
+    return $this->getTableString();
   }
 
 }

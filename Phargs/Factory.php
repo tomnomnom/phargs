@@ -28,4 +28,8 @@ class Factory {
     );
   }
 
+  public function table(Array $fields = array()){
+    return new \Phargs\Formatter\Table($fields);
+  }
+
 }

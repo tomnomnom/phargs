@@ -200,4 +200,14 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertContains("What is your name? No name entered!", $output, "Output should have matched expected");
     $this->assertContains("What is your name? Hello, Tom!", $output, "Output should have matched expected");
   }
+
+  public function testTable(){
+    list($output, $exitCode) = $this->execExample('Table');
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    $this->assertContains('| id | name  |', $output, "Output should have contained [| id | name  |]");
+    $this->assertContains('| 1  | Tom   |', $output, "Output should have contained [| 1  | Tom   |]");
+    $this->assertContains('| 2  | Dick  |', $output, "Output should have contained [| 2  | Dick  |]");
+    $this->assertContains('| 3  | Harry |', $output, "Output should have contained [| 3  | Harry |]");
+  }
 }

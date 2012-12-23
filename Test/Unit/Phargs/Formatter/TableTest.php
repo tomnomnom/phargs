@@ -32,6 +32,18 @@ class TableTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(1, $t->getRowCount(), "Row count should have been [1]");
   }
 
+  public function testAddRows(){
+    $t = $this->newTable(array('id', 'name'));
+
+    $t->addRows(array(
+      array(1, 'tom'),
+      array(2, 'dick'),
+      array(3, 'harry')
+    ));
+
+    $this->assertEquals(3, $t->getRowCount(), "Row count should have been [3]");
+  }
+
   public function testFieldWidths(){
     $t = $this->newTable(array('id', 'name'));
 
@@ -47,6 +59,15 @@ class TableTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('| 2  | dick  |', $rows[4], "Row should have matched expected");
     $this->assertEquals('| 3  | harry |', $rows[5], "Row should have matched expected");
     $this->assertEquals('--------------', $rows[6], "Row should have matched expected");
-  
+  }
+
+  public function testToString(){
+    $t = $this->newTable(array('id', 'name'));
+
+    $t->addRow(array(1, 'tom'));
+    $t->addRow(array(2, 'dick'));
+    $t->addRow(array(3, 'harry'));
+    
+    $this->assertEquals($t->getTableString(), (string) $t, "__toString output should match getTableString() output");
   }
 }
