@@ -25,6 +25,7 @@ This README file is a little long, so here's a breakdown of the contents to make
   - [Residual args](#residual-args)
 * [Outputting to the screen](#outputting-to-the-screen)
   - [Basic usage](#basic-usage-2)
+  - [Colors](#colors)
 * [Prompting for input](#prompting-for-input)
   - [Basic usage](#basic-usage-3)
   - [Required input](#required-input)
@@ -378,6 +379,45 @@ $screen->log('A log message');
     )
     2012-12-22T15:16:50+00:00: A log message
 
+### Colors
+Although difficult to demonstrate in a README file, Phargs supports ANSI colors.
+
+```php
+<?php
+// ./Examples/ScreenColors.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+
+// Get a screen interface
+$screen = $factory->screen();
+
+$screen->outln("Red", 'red');
+$screen->outln("Red with a white background", "red", "white");
+$screen->outln("Red with a white background, underlined", "red", "white", "underline");
+```
+
+    ▶ php ./Examples/ScreenColors.php 
+    Red
+    Red with a white background
+    Red with a white background, underlined
+    
+They really are in color; honest!
+
+8 colors are supported:
+* `black`
+* `red`
+* `green`
+* `yellow`
+* `blue`
+* `purple`
+* `cyan`
+* `white`
+
+3 different *styles* are supported:
+* `regular`
+* `bold`
+* `underline`
 
 ## Prompting for input
 Phargs has an interface for prompting for user input. 
