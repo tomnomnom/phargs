@@ -29,6 +29,8 @@ This README file is a little long, so here's a breakdown of the contents to make
 * [Prompting for input](#prompting-for-input)
   - [Basic usage](#basic-usage-3)
   - [Required input](#required-input)
+* [Formatting](#formatting)
+  - [Tables](#tables)
 * [Requirements](#requirements)
 * [Testing](#testing)
 
@@ -475,6 +477,43 @@ $screen->outln("Hello, {$name}!");
     No name entered!
     What is your name? Tom
     Hello, Tom!
+
+## Formatting
+
+At the moment the only formatter is for making ASCII tables. It's available via `\Phargs\Factory::table()`.
+
+### Tables
+The table formatter works out how wide to make each column so that everything lines up. 
+
+```php
+<?php
+// ./Examples/Table.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+$screen = $factory->screen();
+
+// Get a table formatter
+$table = $factory->table();
+
+$table->setFields(array('id', 'name'));
+$table->addRows(array(
+  array(1, 'Tom'),
+  array(2, 'Dick'),
+  array(3, 'Harry'),
+));
+
+$screen->out($table);
+```
+
+    ▶ php ./Examples/Table.php
+    --------------
+    | id | name  |
+    --------------
+    | 1  | Tom   |
+    | 2  | Dick  |
+    | 3  | Harry |
+    --------------
 
 
 ## Requirements
