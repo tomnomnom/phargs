@@ -52,13 +52,13 @@ class TableTest extends \PHPUnit_Framework_TestCase {
     $t->addRow(array(3, 'harry'));
 
     $rows = explode(PHP_EOL, $t->getTableString());
-    $this->assertEquals('--------------', $rows[0], "Row should have matched expected");
+    $this->assertEquals('+----+-------+', $rows[0], "Row should have matched expected");
     $this->assertEquals('| id | name  |', $rows[1], "Row should have matched expected");
-    $this->assertEquals('--------------', $rows[2], "Row should have matched expected");
+    $this->assertEquals('+----+-------+', $rows[2], "Row should have matched expected");
     $this->assertEquals('| 1  | tom   |', $rows[3], "Row should have matched expected");
     $this->assertEquals('| 2  | dick  |', $rows[4], "Row should have matched expected");
     $this->assertEquals('| 3  | harry |', $rows[5], "Row should have matched expected");
-    $this->assertEquals('--------------', $rows[6], "Row should have matched expected");
+    $this->assertEquals('+----+-------+', $rows[6], "Row should have matched expected");
   }
 
   public function testToString(){
