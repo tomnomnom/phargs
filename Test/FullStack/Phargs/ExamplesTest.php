@@ -210,4 +210,14 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     $this->assertContains('| 2  | Dick  |', $output, "Output should have contained [| 2  | Dick  |]");
     $this->assertContains('| 3  | Harry |', $output, "Output should have contained [| 3  | Harry |]");
   }
+
+  public function testTsv(){
+    list($output, $exitCode) = $this->execExample('Tsv');
+    $this->assertEquals(0, $exitCode, "Exit code should have been [0]");
+
+    $this->assertContains("id\tname", $output, "Output should have contained [id\tname]");
+    $this->assertContains("1\tTom", $output, "Output should have contained [1\tTom]");
+    $this->assertContains("2\tDick", $output, "Output should have contained [2\tDick]");
+    $this->assertContains("3\tHarry", $output, "Output should have contained [3\tHarry]");
+  }
 }

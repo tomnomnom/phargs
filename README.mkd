@@ -480,10 +480,9 @@ $screen->outln("Hello, {$name}!");
 
 ## Formatting
 
-At the moment the only formatter is for making ASCII tables. It's available via `\Phargs\Factory::table()`.
 
 ### Tables
-The table formatter works out how wide to make each column so that everything lines up. 
+The table formatter works out how wide to make each column so that everything lines up. It's available via `\Phargs\Factory::table()`.
 
 ```php
 <?php
@@ -515,6 +514,35 @@ $screen->out($table);
     | 3  | Harry |
     --------------
 
+### TSV
+The TSV (Tab Separated Values) formatter is very similar to the Table formatter. It's available via `\Phargs\Factory::tsv()`.
+
+```php
+<?php
+// ./Examples/Tsv.php
+
+include __DIR__.'/../Phargs/Init.php';
+$factory = new \Phargs\Factory();
+$screen = $factory->screen();
+
+// Get a TSV formatter
+$table = $factory->tsv();
+
+$table->setFields(array('id', 'name'));
+$table->addRows(array(
+  array(1, 'Tom'),
+  array(2, 'Dick'),
+  array(3, 'Harry'),
+));
+
+$screen->out($table);
+```
+
+    ▶ php ./Examples/Tsv.php
+    id      name
+    1       Tom
+    2       Dick
+    3       Harry
 
 ## Requirements
 

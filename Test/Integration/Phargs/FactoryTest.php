@@ -36,4 +36,11 @@ class FactoryTest extends \PHPUnit_Framework_TestCase {
     $t = $f->table();
     $this->assertInstanceOf('\\Phargs\\Formatter\\Table', $t, "Returned object should be instance of [\\Phargs\\Formatter\\Table]");
   }
+
+  public function testTsvFormatter(){
+    $f = $this->newFactory();
+
+    $t = $f->tsv();
+    $this->assertInstanceOf('\\Phargs\\Formatter\\Tsv', $t, "Returned object should be instance of [\\Phargs\\Formatter\\Tsv]");
+  }
 }

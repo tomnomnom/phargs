@@ -32,4 +32,8 @@ class Factory {
     return new \Phargs\Formatter\Table($fields);
   }
 
+  public function tsv(Array $fields = array()){
+    return new \Phargs\Formatter\Tsv($fields);
+  }
+
 }
