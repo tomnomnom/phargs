@@ -13,3 +13,5 @@
 ## 0.0.3 - 2012-12-23
 * Table formatter
 
+## 0.0.4 - 2013-02-23
+* TSV formatter
