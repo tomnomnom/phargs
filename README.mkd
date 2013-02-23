@@ -31,6 +31,7 @@ This README file is a little long, so here's a breakdown of the contents to make
   - [Required input](#required-input)
 * [Formatting](#formatting)
   - [Tables](#tables)
+  - [TSV](#tsv)
 * [Requirements](#requirements)
 * [Testing](#testing)
 
