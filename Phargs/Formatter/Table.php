@@ -27,8 +27,8 @@ class Table {
         $this->fieldWidths[$i] = 0;
       }
 
-      if (strlen($row[$i]) > $this->fieldWidths[$i]){
-        $this->fieldWidths[$i] = strlen($row[$i]);
+      if ($this->strlen($row[$i]) > $this->fieldWidths[$i]){
+        $this->fieldWidths[$i] = $this->strlen($row[$i]);
       }
     }
   }
@@ -66,7 +66,7 @@ class Table {
   protected function getRowString(Array $row){
     for ($i = 0; $i < $this->fieldCount; $i++){
       $finalWidth = $this->fieldWidths[$i];
-      $paddingNeeded = $finalWidth - strlen($row[$i]);
+      $paddingNeeded = $finalWidth - $this->strlen($row[$i]);
       $row[$i] = $row[$i].str_repeat(' ', $paddingNeeded);
     }
     
@@ -112,4 +112,10 @@ class Table {
     return $this->getTableString();
   }
 
+  protected function strlen($str){
+    if (function_exists('mb_strlen')){
+      return mb_strlen($str, 'UTF-8');
+    }
+    return strlen($str);
+  }
 }
