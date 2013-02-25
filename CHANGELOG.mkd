@@ -15,3 +15,6 @@
 
 ## 0.0.4 - 2013-02-23
 * TSV formatter
+
+## 0.0.5 - 2013-02-25
+* Fixed Table formatter when using mb chars
