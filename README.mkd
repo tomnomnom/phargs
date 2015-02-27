@@ -1,16 +1,14 @@
 # Phargs
 
 Phargs is a toolkit for writing CLI scripts in PHP; it was born out of frustration, anger, and 
-boilerplate déjà vu. It is still very much a work in progress. Pull requests, issues, and 
-suggestions are always welcome.
+boilerplate déjà vu. Pull requests, issues, and suggestions are always welcome.
 
-Phargs' main asset so far is its argument processor, although I am working on tools to make other 
-things easier too.
+Phargs' main asset is its argument processor, but the output tools are pretty useful too.
 
 Everything in Phargs is available through `\Phargs\Factory`.
 
 ## Contents
-This README file is a little long, so here's a breakdown of the contents to make navigation a little easier.
+This README file is a little long, so here's a breakdown of the contents:
 
 * [Installation](#installation)
 * [Argument processing](#argument-processing)
@@ -44,7 +42,7 @@ install it using [Composer](http://getcomposer.org/). Just specify it as a depen
 ```json
 {
     "require": {
-        "tomnomnom/phargs": "0.0.2"
+        "tomnomnom/phargs": "0.0.5"
     }
 }
 ```
